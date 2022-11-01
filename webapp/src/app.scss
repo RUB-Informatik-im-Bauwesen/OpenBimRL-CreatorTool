@@ -1,0 +1,19 @@
+body {
+    margin: 0px;
+}
+
+.menuLineLayout {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 5px;
+    margin: 5px;
+}
+
+.dragArea {
+    border: 2px dashed gray;
+    color: gray;
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
+}

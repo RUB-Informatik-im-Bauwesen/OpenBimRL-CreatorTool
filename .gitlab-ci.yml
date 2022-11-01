@@ -1,0 +1,12 @@
+# GitLab Pages webapp deployment
+
+pages:
+  stage: deploy
+  script:
+    - echo "The app will be deployed to $CI_PAGES_URL"
+  artifacts:
+    paths:
+    - webapp/index.html
+    - webapp/dist/
+  only:
+    - main
