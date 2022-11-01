@@ -52,7 +52,7 @@
  */
 
 import GraphItemGroup from "./GraphItemGroup.vue";
-import mbo2bimNodeGroup from "/webapp/resources/MBO2BIM_Ruleset.json";
+import mbo2bimNodeGroup from "../../../../resources/MBO2BIM_Ruleset.json";
 
 export default {
     name: "GraphNodeMenu",

@@ -20,6 +20,7 @@
     "vue-template-compiler": "^2.6.12",
     "vuera": "^0.2.7",
     "vuex": "^3.6.2",
+    "webpack": "^5.74.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
@@ -42,7 +43,18 @@
     "production": "mix --production",
     "start": "electron ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "exports": {
+    "./": "./webapp/src/"
+  },
+  "keywords": [
+    "OpenBimRl",
+    "Rule Checking",
+    "BIM",
+    "Semantics",
+    "Geometry",
+    "Graph",
+    "Rule Language"
+  ],
+  "author": "Marcel Stepien",
+  "license": "MIT"
 }

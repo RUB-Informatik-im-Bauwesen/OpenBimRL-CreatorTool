@@ -41,7 +41,7 @@
 import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements } from 'react-flow-renderer';
 import Reactflowcontrols from './Reactflowcontrols.vue';
 import Reactflowbackground from './Reactflowbackground.vue';
-import Parser, { createUniqueID } from '/webapp/src/core/ParserOpenBIMRL.ts';
+import Parser, { createUniqueID } from '../../../core/ParserOpenBIMRL.ts';
 import { 
     DEFAULT_NODE_WIDTH,
     //createInputType, 
@@ -50,8 +50,8 @@ import {
     creatFancyFunctionType, 
     createFancyInputType, 
     createFancyRuleIdentifier 
-} from "/webapp/src/core/CustomNodeSetup.ts";
-import exampleData from "/webapp/resources/defaultGraphExample.json";
+} from "../../../core/CustomNodeSetup.ts";
+import exampleData from "../../../../resources/defaultGraphExample.json";
 import xmljs from 'xml-js';
 
 export default {
