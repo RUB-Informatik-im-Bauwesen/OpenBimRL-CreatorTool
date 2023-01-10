@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
 /**
@@ -268,13 +268,15 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     let headContainer = React.createElement(
         'div', {
             'style': {
+                padding: "10px",
+                textAlign: "center",
                 background: 'LightCyan',
                 height: String(nodeHeaderSize) + 'px'
             }
         }, 
-        "(" + dataNode.data.name + ")",
-        React.createElement('br'), 
-        dataNode.data.label
+        dataNode.data.name
+        //React.createElement('br'), 
+        //dataNode.data.label
     );
 
     //Create the body container
@@ -338,7 +340,7 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
                 height: String(headerSize) + 'px'
             }
         }, 
-        "(" + dataNode.data.name + ")"
+        dataNode.data.name
     );
 
     //Create the body container
@@ -402,7 +404,7 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
                 height: String(headerSize) + 'px'
             }
         }, 
-        "(" + dataNode.data.name + ")"
+        dataNode.data.name
     );
 
     //Create the body container
