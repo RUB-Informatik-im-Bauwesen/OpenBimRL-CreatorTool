@@ -32,6 +32,9 @@
             <b-button-group class="mx-1">
                 <b-button v-b-toggle.sidebar-nodemenu variant="primary">Create Nodes</b-button>
             </b-button-group>
+            <b-button-group class="mx-1">
+                <b-button @click="handleCreateGroup" variant="danger">Create Group</b-button>
+            </b-button-group>
 
             <!--
             <b-button-group class="mx-1">
@@ -121,9 +124,9 @@
  * @author Marcel Stepien
  * @version 2022.11.1
  */
-
 import GraphNodeMenu from './GraphNodeMenu/GraphNodeMenu.vue';
 import Parser from '/webapp/src/core/ParserOpenBIMRL.ts';
+import { createGroup, updateGroup } from '/webapp/src/core/CustomNodeSetup.ts';
 import xmljs from 'xml-js';
 
 export default {
@@ -141,6 +144,10 @@ export default {
     },
 
     methods: {
+        handleCreateGroup(){
+            let group = createGroup();
+            updateGroup(group.id);
+        },
         showFilenameModal(filetype){
             this.downloadContext.data.filetype = filetype;
             this.$bvModal.show("filename-input-modal");

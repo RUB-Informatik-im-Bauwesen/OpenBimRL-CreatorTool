@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
+import { v4 as uuidv4 } from 'uuid';
+import store from "../store.js";
 
 /**
  * @author Marcel Stepien
@@ -445,4 +447,148 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
         sources
     );
     return reactVueNode;
+}
+
+/**
+ * 
+ */
+export function createGroup(){
+    let selectedNodes = store.state.selectedElements;
+
+    let gId = uuidv4();
+
+    let group = {
+        id: gId,
+        type: "group",
+        data: { label: 'Example Group Label', localWidth: 0, localHeight: 0 },
+        position: { x: 0, y: 0 },
+        className: 'light',
+        style: { backgroundColor: 'rgba(255, 0, 0, 0.2)', width: 0, height: 0 }
+    };
+
+    let filteredElements = store.state.modelCheck.elements.filter(
+        function(value, index, arr){ 
+            for(let node of selectedNodes){
+                if(node.id === value.id){
+                    return false;
+                }
+            }
+            return true;
+        }
+    );
+
+    for(let node of selectedNodes){
+        node["parentNode"] = gId;
+        //node.data.parentNode = gId;
+    }
+
+    //convoluted but working way to update the reactivness of the array
+    store.state.modelCheck.elements = [group].concat(filteredElements).concat(selectedNodes);
+    return group;
+}
+
+
+/**
+ * 
+ */
+export function updateGroup(groupID){
+    let groupNode = findElement(groupID);
+    if(groupNode){
+        let margin = 25;
+        let reducedElementList = store.state.modelCheck.elements.filter(
+            function(value, index, arr){ 
+                return value.id !== groupID;
+            }
+        );
+
+        let groupedElements = store.state.modelCheck.elements.filter(
+            function(value, index, arr){ 
+                return value.parentNode === groupID;
+            }
+        );
+
+        let newPosition = { x: undefined, y: undefined };
+        let cornerPosition = { x: undefined, y: undefined };
+        for(let gNode of groupedElements){
+            let offsetX = undefined;
+            let offsetY = undefined;
+
+            if(gNode.type === "group"){
+                offsetX = gNode.data.localWidth;
+                offsetY = gNode.data.localHeight;
+            }else{
+                let sourceCount = gNode.data.outputs.length;
+                let targetCount = gNode.data.inputs.length;
+                
+                let maxCount = sourceCount;
+                if(sourceCount < targetCount){
+                    maxCount = targetCount;
+                }
+                
+                let maxSize = (stepsize * maxCount) + 25 + nodeHeaderSize;
+
+                offsetX = DEFAULT_NODE_WIDTH;
+                offsetY = maxSize;
+            }
+            
+            if(!newPosition.x){ newPosition.x = gNode.position.x; }
+            if(!cornerPosition.x){ cornerPosition.x = gNode.position.x; }
+
+            if(!newPosition.y){ newPosition.y = gNode.position.y; }
+            if(!cornerPosition.y){ cornerPosition.y = gNode.position.y; }
+
+            if(newPosition.x > gNode.position.x){ newPosition.x = gNode.position.x; }
+            if(cornerPosition.x < (gNode.position.x + offsetX)){ 
+                cornerPosition.x = (gNode.position.x + offsetX); 
+            }
+
+            if(newPosition.y > gNode.position.y){ newPosition.y = gNode.position.y; }
+            if(cornerPosition.y < (gNode.position.y + offsetY)){ 
+                cornerPosition.y = (gNode.position.y + offsetY); 
+            }
+        }
+
+        newPosition.x = newPosition.x - margin;
+        newPosition.y = newPosition.y - margin;
+        
+        cornerPosition.x = cornerPosition.x + margin;
+        cornerPosition.y = cornerPosition.y + margin;
+        
+        let localWidth = cornerPosition.x - newPosition.x;
+        let localHeight = cornerPosition.y - newPosition.y;
+
+        if(localWidth < 0){
+            localWidth = localWidth * -1;
+        }
+
+        if(localHeight < 0){
+            localHeight = localHeight * -1;
+        }
+
+        let groupNode = findElement(groupID);
+        groupNode.position = newPosition;
+        groupNode.data.localWidth = localWidth;
+        groupNode.data.localHeight = localHeight;
+        groupNode.style = { backgroundColor: 'rgba(0, 255, 0, 0.2)', width: localWidth, height: localHeight };
+
+        store.state.modelCheck.elements = [groupNode].concat(reducedElementList);
+
+        if(groupNode.parentNode){
+            updateGroup(groupNode.parentNode);
+        }
+    }
+}
+
+/**
+ * 
+ * @param id 
+ * @returns 
+ */
+export function findElement(id){
+    for(let index in store.state.modelCheck.elements){
+        let element = store.state.modelCheck.elements[index];
+        if(element.id === id){
+            return element;
+        }
+    }
 }

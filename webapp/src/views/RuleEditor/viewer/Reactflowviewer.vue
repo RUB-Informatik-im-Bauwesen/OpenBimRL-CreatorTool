@@ -13,6 +13,7 @@
             :onSelectionChange="onSelectionChange"
             :onNodeDoubleClick="onNodeDoubleClick"
             :onNodeDragStop="onNodeDragStop"
+            :onNodeDrag="onNodeDrag"
             :defaultZoom="$store.state.viewer.currentZoom" 
             :minZoom="$store.state.viewer.minZoom" 
             :maxZoom="$store.state.viewer.maxZoom">
@@ -49,7 +50,8 @@ import {
     //createRuleIdentifier, 
     creatFancyFunctionType, 
     createFancyInputType, 
-    createFancyRuleIdentifier 
+    createFancyRuleIdentifier,
+    updateGroup
 } from "../../../core/CustomNodeSetup.ts";
 import exampleData from "../../../../resources/defaultGraphExample.json";
 import xmljs from 'xml-js';
@@ -57,7 +59,7 @@ import xmljs from 'xml-js';
 export default {
     name: "Reactflowviewer",
 
-    props : ["currentfile"],
+    props : ["currentfile", "elements"],
 
     data() {
         return {
@@ -74,9 +76,23 @@ export default {
         }
     },
     methods: {
+        onNodeDrag(event, node){
+            /*
+            let storedNode = this.findElement(node.id);
+            storedNode.position = node.position;
+
+            if(storedNode.parentNode){
+                updateGroup(storedNode.parentNode);
+            }
+            */
+        },
         onNodeDragStop(event, node){
             let storedNode = this.findElement(node.id);
             storedNode.position = node.position;
+
+            if(storedNode.parentNode){
+                updateGroup(storedNode.parentNode);
+            }
         },
         /* onMove: updates the position of the pane transformation to update the background rendering. */
         onMove(position){
