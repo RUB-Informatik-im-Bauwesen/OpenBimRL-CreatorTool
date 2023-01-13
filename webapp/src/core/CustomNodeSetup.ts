@@ -460,56 +460,63 @@ export function createGroup(){
     let group = {
         id: gId,
         type: "group",
-        data: { label: 'Example Group Label', localWidth: 0, localHeight: 0 },
+        data: { 
+            label: 'Example Group Label', 
+            localWidth: 0, 
+            localHeight: 0, 
+            groupedElementIds: [], 
+            color: 'rgba(0, 255, 0, 0.2)' 
+        },
         position: { x: 0, y: 0 },
         className: 'light',
-        style: { backgroundColor: 'rgba(255, 0, 0, 0.2)', width: 0, height: 0 }
-    };
-
-    let filteredElements = store.state.modelCheck.elements.filter(
-        function(value, index, arr){ 
-            for(let node of selectedNodes){
-                if(node.id === value.id){
-                    return false;
-                }
-            }
-            return true;
+        style: { 
+            backgroundColor: 'rgba(0, 255, 0, 0.2)', 
+            width: 0, 
+            height: 0
+            //boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
+            //transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
         }
-    );
+    };
 
     for(let node of selectedNodes){
         node["parentNode"] = gId;
         //node.data.parentNode = gId;
+        group.data.groupedElementIds.push(node.id);
+        store.state.modelCheck.elements.set(node.id, node);
     }
 
     //convoluted but working way to update the reactivness of the array
-    store.state.modelCheck.elements = [group].concat(filteredElements).concat(selectedNodes);
+    store.state.modelCheck.elements.set(group.id, group);
+
     return group;
 }
 
+/**
+ * 
+ * @param id 
+ * @returns 
+ */
+export function findElement(id){
+    return store.state.modelCheck.elements.get(id);
+}
 
 /**
  * 
  */
 export function updateGroup(groupID){
     let groupNode = findElement(groupID);
+    let gEIds = groupNode ? groupNode.data.groupedElementIds : undefined;
+
     if(groupNode){
+
         let margin = 25;
-        let reducedElementList = store.state.modelCheck.elements.filter(
-            function(value, index, arr){ 
-                return value.id !== groupID;
-            }
-        );
-
-        let groupedElements = store.state.modelCheck.elements.filter(
-            function(value, index, arr){ 
-                return value.parentNode === groupID;
-            }
-        );
-
+        
         let newPosition = { x: undefined, y: undefined };
         let cornerPosition = { x: undefined, y: undefined };
-        for(let gNode of groupedElements){
+
+        for(let gNodeId of gEIds){
+            let gNode = findElement(gNodeId);
+
             let offsetX = undefined;
             let offsetY = undefined;
 
@@ -517,8 +524,8 @@ export function updateGroup(groupID){
                 offsetX = gNode.data.localWidth;
                 offsetY = gNode.data.localHeight;
             }else{
-                let sourceCount = gNode.data.outputs.length;
-                let targetCount = gNode.data.inputs.length;
+                let sourceCount = gNode.data.outputs ? gNode.data.outputs.length : 0;
+                let targetCount = gNode.data.inputs ? gNode.data.inputs.length : 0;
                 
                 let maxCount = sourceCount;
                 if(sourceCount < targetCount){
@@ -565,30 +572,20 @@ export function updateGroup(groupID){
             localHeight = localHeight * -1;
         }
 
-        let groupNode = findElement(groupID);
         groupNode.position = newPosition;
         groupNode.data.localWidth = localWidth;
         groupNode.data.localHeight = localHeight;
-        groupNode.style = { backgroundColor: 'rgba(0, 255, 0, 0.2)', width: localWidth, height: localHeight };
 
-        store.state.modelCheck.elements = [groupNode].concat(reducedElementList);
+        groupNode.style = { 
+            backgroundColor: groupNode.data.color, 
+            width: localWidth, 
+            height: localHeight
+        };
+
+        store.state.modelCheck.elements.set(groupNode.id, groupNode);
 
         if(groupNode.parentNode){
             updateGroup(groupNode.parentNode);
-        }
-    }
-}
-
-/**
- * 
- * @param id 
- * @returns 
- */
-export function findElement(id){
-    for(let index in store.state.modelCheck.elements){
-        let element = store.state.modelCheck.elements[index];
-        if(element.id === id){
-            return element;
         }
     }
 }

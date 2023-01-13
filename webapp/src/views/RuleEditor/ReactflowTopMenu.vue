@@ -147,6 +147,7 @@ export default {
         handleCreateGroup(){
             let group = createGroup();
             updateGroup(group.id);
+            this.$emit("callNotify");
         },
         showFilenameModal(filetype){
             this.downloadContext.data.filetype = filetype;
@@ -156,8 +157,14 @@ export default {
             this.$bvModal.hide("filename-input-modal");
             
             if(this.downloadContext.data.filetype === 'json'){
+                let localModelCheck = {
+                    elements: Array.from(this.$store.state.modelCheck.elements.values()),
+                    subChecks: this.$store.state.modelCheck.subChecks,
+                    resultSets: this.$store.state.modelCheck.resultSets
+                };
+
                 let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(
-                    this.$store.state.modelCheck
+                    localModelCheck
                 ));
                 let dlAnchorElem = document.getElementById('downloadAnchorElem');
                 dlAnchorElem.setAttribute("href", dataStr );
@@ -170,7 +177,7 @@ export default {
             
                 let dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(
                     parser.build(
-                        this.$store.state.modelCheck.elements,
+                        Array.from(this.$store.state.modelCheck.elements.values()),
                         this.$store.state.modelCheck.subChecks,
                         this.$store.state.modelCheck.resultSets,
                         this.downloadContext.data.filename
@@ -191,11 +198,18 @@ export default {
             document.getElementById('uploadXMLAnchorElem').click();
         },
         uploaderOnChange(event, filetype){
+            let _self = this;
             let reader = new FileReader();
             reader.onload = (event) => {
                 if(filetype === 'json'){
                     let obj = JSON.parse(event.target.result);
-                    this.$store.state.modelCheck = obj;
+
+                    _self.$store.state.modelCheck.elements = new Map();
+                    for(let ele of obj.elements){
+                        _self.$store.state.modelCheck.elements.set(ele.id, ele);
+                    }
+                    _self.$store.state.modelCheck.subChecks = obj.subChecks;
+                    _self.$store.state.modelCheck.resultSets = obj.resultSets;
                 }
 
                 if(filetype === 'xml'){
@@ -208,18 +222,26 @@ export default {
                     let result = parser.parse(jsonData, opts);
 
                     //Load into storage
-                    this.$store.state.modelCheck.elements = result.elements;
-                    this.$store.state.modelCheck.subChecks = result.subChecks;
-                    this.$store.state.modelCheck.resultSets = result.resultSets;
+                    let elements = result.elements;
+                    _self.$store.state.modelCheck.elements = new Map();
+                    for(let ele of elements){
+                        _self.$store.state.modelCheck.elements.set(ele.id, ele);
+                    }
+
+                    _self.$store.state.modelCheck.subChecks = result.subChecks;
+                    _self.$store.state.modelCheck.resultSets = result.resultSets;
                 }
+
+                _self.$emit("callNotify");
             };
             reader.readAsText(event.target.files[0]);
         },
         createNewAction(event){
-            this.$store.state.modelCheck.elements = [];
+            this.$store.state.modelCheck.elements = new Map();
             this.$store.state.modelCheck.subChecks = [];
             this.$store.state.modelCheck.resultSets = [];
             this.hideModal();
+            this.$emit("callNotify");
         },
         showModal() {
             this.$refs['createNew-modal'].show();

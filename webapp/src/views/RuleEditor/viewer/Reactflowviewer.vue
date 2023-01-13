@@ -3,7 +3,7 @@
         <reactFlow 
             id="reactflowviewer" 
             style="width: 100%; height: 100%;" 
-            :elements="$store.state.modelCheck.elements" 
+            :elements="localElements" 
             :nodeTypes="nodeTypes"
             :onMove="onMove"
             :onDragOver="onDragOver"
@@ -59,7 +59,7 @@ import xmljs from 'xml-js';
 export default {
     name: "Reactflowviewer",
 
-    props : ["currentfile", "elements"],
+    props : ["currentfile"],
 
     data() {
         return {
@@ -72,19 +72,19 @@ export default {
                 //inputType : createInputType,
                 //functionType : createFunctionType,
                 //ruleIdentifier : createRuleIdentifier
-            }
+            },
+            localElements: []
         }
     },
     methods: {
         onNodeDrag(event, node){
-            /*
             let storedNode = this.findElement(node.id);
             storedNode.position = node.position;
-
+            
             if(storedNode.parentNode){
                 updateGroup(storedNode.parentNode);
+                this.notify();
             }
-            */
         },
         onNodeDragStop(event, node){
             let storedNode = this.findElement(node.id);
@@ -92,6 +92,7 @@ export default {
 
             if(storedNode.parentNode){
                 updateGroup(storedNode.parentNode);
+                this.notify();
             }
         },
         /* onMove: updates the position of the pane transformation to update the background rendering. */
@@ -138,7 +139,11 @@ export default {
                 nodeTemplateInstance.id = createUniqueID(); 
 
                 //add node to scene and reload elements
-                this.$store.state.modelCheck.elements = this.$store.state.modelCheck.elements.concat([nodeTemplateInstance]);
+                this.$store.state.modelCheck.elements.set(nodeTemplateInstance.id, nodeTemplateInstance);
+
+                this.localElements = Array.from(
+                    this.$store.state.modelCheck.elements.values()
+                );
             }
         },
         /* onEdgeUpdate: update and relace edge instance */
@@ -172,7 +177,13 @@ export default {
                     "strokeWidth" : 4
                 }
             }
-            this.$store.state.modelCheck.elements = this.$store.state.modelCheck.elements.concat([newEdge]);
+            
+            this.$store.state.modelCheck.elements.set(newEdge.id, newEdge);
+
+            this.localElements = Array.from(
+                this.$store.state.modelCheck.elements.values()
+            );
+
         },
         /* onNodeDoubleClick: displays a modal input menu for the selected node */
         onNodeDoubleClick(event, node){
@@ -215,27 +226,44 @@ export default {
         deleteSelectedElements(){
             //Returns an array of elements without the ones from elementsToRemove. 
             //Also removes all incoming/outgoing edges.
-            this.$store.state.modelCheck.elements = removeElements(
+            
+            let reducedList = removeElements(
                 this.$store.state.selectedElements, 
-                this.$store.state.modelCheck.elements
+                Array.from(this.$store.state.modelCheck.elements.values())
             ); 
+
+            for(let selectedNode of this.$store.state.selectedElements){
+                this.$store.state.modelCheck.elements.delete(selectedNode.id);
+            }
+            this.localElements = reducedList;
         },
         findElement(id){
-            for(let index in this.$store.state.modelCheck.elements){
-                let element = this.$store.state.modelCheck.elements[index];
-                if(element.id === id){
-                    return element;
-                }
-            }
+            return this.$store.state.modelCheck.elements.get(id);
         },
         handleRenderBGGrid(){
             this.$store.state.settings.renderBackground = !this.$store.state.settings.renderBackground;
+        },
+        notify(){
+            //manuel update to handle reactivity of maps
+            this.localElements = Array.from(
+                this.$store.state.modelCheck.elements.values()
+            );
         }
     },
     mounted: function () {
         //Load sample data when mounted
-        if(this.$store.state.modelCheck.elements.length === 0){
-            this.$store.state.modelCheck = exampleData;
+        if(this.$store.state.modelCheck.elements.size === 0){
+            
+            this.localElements = exampleData.elements;
+            let elements = exampleData.elements;
+            this.$store.state.modelCheck.elements = new Map();
+            for(let ele of elements){
+                this.$store.state.modelCheck.elements.set(ele.id, ele);
+            }
+
+            this.$store.state.modelCheck.subChecks = exampleData.subChecks;
+            this.$store.state.modelCheck.resultSets = exampleData.resultSets;
+
             this.$store.state.subChecks = [{
                 id: "0",
                 name: "Absatz 1: Test Prüfung",
@@ -283,7 +311,12 @@ export default {
                 
                 let opts = this.$store.state.settings;
                 let parser = new Parser();
-                this.$store.state.modelCheck.elements = parser.parse(jsonData, opts);
+                let elements = parser.parse(jsonData, opts);
+
+                this.$store.state.modelCheck.elements = new Map();
+                for(let ele of elements){
+                    this.$store.state.modelCheck.elements.set(ele.id, ele);
+                }
             }); //response.json()
         }
     },

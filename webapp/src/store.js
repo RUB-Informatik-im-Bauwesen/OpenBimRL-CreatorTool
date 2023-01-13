@@ -25,7 +25,7 @@ const store = new Vuex.Store({
             maxZoom : 4.0
         },
         modelCheck: {
-            elements: [], //Containes Nodes and Edeges from the precalculations
+            elements: new Map(), //Containes Nodes and Edeges from the precalculations
             subChecks: [], //Containes ModelSubChecks and Rules and RuleSets
             resultSets: [] //Containes ResultSets
         },
