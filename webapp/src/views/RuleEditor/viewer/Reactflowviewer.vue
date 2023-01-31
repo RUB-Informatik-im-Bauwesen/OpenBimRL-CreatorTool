@@ -224,17 +224,28 @@ export default {
         },
         /* deleteSelectedElements: deletes the current selection from the scene */
         deleteSelectedElements(){
+            let eleArr = Array.from(this.$store.state.modelCheck.elements.values());
+            let currentKeys = Array.from(this.$store.state.modelCheck.elements.keys());
+            let selection = this.$store.state.selectedElements;
+
             //Returns an array of elements without the ones from elementsToRemove. 
             //Also removes all incoming/outgoing edges.
-            
             let reducedList = removeElements(
-                this.$store.state.selectedElements, 
-                Array.from(this.$store.state.modelCheck.elements.values())
+                selection, 
+                eleArr
             ); 
 
-            for(let selectedNode of this.$store.state.selectedElements){
-                this.$store.state.modelCheck.elements.delete(selectedNode.id);
+            for(let activeElement of reducedList){
+                const index = currentKeys.indexOf(activeElement.id);
+                if (index > -1) { // only splice array when item is found
+                    currentKeys.splice(index, 1); // 2nd parameter means remove one item only
+                }
             }
+            
+            for(let removedElementKey of currentKeys){
+                this.$store.state.modelCheck.elements.delete(removedElementKey);
+            }
+            
             this.localElements = reducedList;
         },
         findElement(id){
