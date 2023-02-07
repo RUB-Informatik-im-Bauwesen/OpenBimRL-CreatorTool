@@ -916,6 +916,24 @@
                     "selected": false
                 }
             },{ 
+                "id": "4ad6b33d-28b7-4857-aa6d-6d03e37a12ba", 
+                "type": "functionType", 
+                "data":{
+                    "name": "geometry.calculateAStarSearch",
+                    "icon": "exclamation-circle-fill", 
+                    "description": "Performs a shortest path search based on distances from an start node to all reachable end nodes in a graph.",
+                    "label": "Example Text Here",
+                    "inputs": [
+                        { "index": "0", "name":"Edges" },
+                        { "index": "1", "name":"StartNodes" },
+                        { "index": "2", "name":"EndNodes" }
+                    ],
+                    "outputs": [
+                        { "index": "0", "name":"Paths" }
+                    ],
+                    "selected": false
+                }
+            },{ 
                 "id": "8f71131d-18b8-4c8c-a800-449e54a919b0", 
                 "type": "functionType", 
                 "data":{
@@ -943,6 +961,22 @@
                     "inputs": [
                         { "index": "0", "name":"Nodes" },
                         { "index": "1", "name":"Edges" }
+                    ],
+                    "outputs": [
+                        { "index": "0", "name":"Flag" }
+                    ],
+                    "selected": false
+                }
+            },{ 
+                "id": "766ac645-dc8f-4c07-8c7f-d7ccd5f8c176", 
+                "type": "functionType", 
+                "data":{
+                    "name": "geometry.showPaths",
+                    "icon": "exclamation-circle-fill", 
+                    "description": "Loads the paths information and displays it in the 3D viewer.",
+                    "label": "Example Text Here",
+                    "inputs": [
+                        { "index": "0", "name":"Paths" }
                     ],
                     "outputs": [
                         { "index": "0", "name":"Flag" }
