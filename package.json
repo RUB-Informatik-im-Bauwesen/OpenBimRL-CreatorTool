@@ -16,10 +16,12 @@
     "stream": "0.0.2",
     "uuid": "^8.3.2",
     "vue": "^2.6.12",
+    "vue-color": "^2.8.1",
     "vue-router": "^3.5.3",
     "vue-template-compiler": "^2.6.12",
     "vuera": "^0.2.7",
     "vuex": "^3.6.2",
+    "webpack": "^5.74.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {

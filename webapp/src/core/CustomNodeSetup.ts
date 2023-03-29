@@ -1,5 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
+import { v4 as uuidv4 } from 'uuid';
+import store from "../store.js";
 
 /**
  * @author Marcel Stepien
@@ -12,29 +14,29 @@ import { Handle, Position } from 'react-flow-renderer';
 /**
  * 
  */
-export function createInputType(dataNode:any) {
+export function createInputType(dataNode: any) {
     //console.log(dataNode);
 
     //Creates nodes for in- and output
     //let targets = createTargets(dataNode.data.inputs, 0);
     let sources = createSources(dataNode.data.outputs, 0);
-    
+
 
     let reactVueNode = React.createElement(
         'div', {
-            'style': {
-                width: '250px', 
-                height: '50px',
-                background: 'white',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid black',
-                boxShadow: dataNode.data.selected ? 
-                    "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)":
-                    "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)", 
-                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-            }
-        }, 
+        'style': {
+            width: '250px',
+            height: '50px',
+            background: 'white',
+            borderRadius: 5,
+            textAlign: 'center',
+            border: '2px solid black',
+            boxShadow: dataNode.data.selected ?
+                "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)" :
+                "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+            transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+        }
+    },
         React.createElement('div', {
             'style': {
                 background: 'white',
@@ -52,12 +54,12 @@ export function createInputType(dataNode:any) {
 /**
  * 
  */
-export function createFunctionType(dataNode:any) {
+export function createFunctionType(dataNode: any) {
     let sourceCount = dataNode.data.outputs.length;
     let targetCount = dataNode.data.inputs.length;
 
     let maxCount = sourceCount;
-    if(sourceCount < targetCount){
+    if (sourceCount < targetCount) {
         maxCount = targetCount;
     }
 
@@ -70,19 +72,19 @@ export function createFunctionType(dataNode:any) {
 
     let reactVueNode = React.createElement(
         'div', {
-            'style': {
-                width: '250px', 
-                height: String(maxSize) + 'px',
-                background: 'lightblue',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid black',
-                boxShadow: dataNode.data.selected ?  
-                    "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)":
-                    "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)", 
-                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-            }
-        }, 
+        'style': {
+            width: '250px',
+            height: String(maxSize) + 'px',
+            background: 'lightblue',
+            borderRadius: 5,
+            textAlign: 'center',
+            border: '2px solid black',
+            boxShadow: dataNode.data.selected ?
+                "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)" :
+                "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+            transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+        }
+    },
         React.createElement('div', {
             'style': {
                 background: 'white',
@@ -101,24 +103,24 @@ export function createFunctionType(dataNode:any) {
 /**
  * 
  */
-export function createRuleIdentifier(dataNode:any) {
+export function createRuleIdentifier(dataNode: any) {
     //console.log(dataNode);
-    
+
     //Creates nodes for in- and output
     let targets = createTargets(dataNode.data.inputs, 0);
     let sources = createSources(dataNode.data.outputs, 0);
 
     let reactVueNode = React.createElement(
         'div', {
-            'style': {
-                width: '250px', 
-                height: '50px',
-                background: 'Salmon',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid black'
-            }
-        }, 
+        'style': {
+            width: '250px',
+            height: '50px',
+            background: 'Salmon',
+            borderRadius: 5,
+            textAlign: 'center',
+            border: '2px solid black'
+        }
+    },
         React.createElement('div', {
             'style': {
                 background: 'white',
@@ -142,40 +144,40 @@ const nodeHeaderSize = 50;
 const stepsize = 25;
 const targetsRadius = 15;
 
-function createTargets(targetJSON:any, headOffsetProzentage:number, createLabel = false){
-    let targets:any[] = [];
-    
-    if(targetJSON){
+function createTargets(targetJSON: any, headOffsetProzentage: number, createLabel = false) {
+    let targets: any[] = [];
+
+    if (targetJSON) {
         let targetCount = targetJSON.length;
 
-        for(let inputIndex in targetJSON){
+        for (let inputIndex in targetJSON) {
             let input = targetJSON[inputIndex];
-            
+
             //Positioning in procentage from the top
-            let topPosition = headOffsetProzentage + 
-                ((100 - headOffsetProzentage)  / targetCount) * new Number(inputIndex).valueOf() + 
-                ((100 - headOffsetProzentage) / targetCount)/2;
-            
+            let topPosition = headOffsetProzentage +
+                ((100 - headOffsetProzentage) / targetCount) * new Number(inputIndex).valueOf() +
+                ((100 - headOffsetProzentage) / targetCount) / 2;
+
             let label;
-            if(createLabel){
+            if (createLabel) {
                 label = React.createElement(
                     'label', {
-                        'style': {
-                            position: 'fixed',
-                            right: String(-1 * DEFAULT_NODE_WIDTH/2 + targetsRadius) + 'px',
-                            top: String(-1 * targetsRadius/2) + 'px',
-                            width: String(DEFAULT_NODE_WIDTH/2 - targetsRadius * 1.5) + 'px',
-                            textAlign: Position.Left,
-                            overflow: 'hidden'
-                            //border: '1px solid black'
-                        }
-                    },
+                    'style': {
+                        position: 'fixed',
+                        right: String(-1 * DEFAULT_NODE_WIDTH / 2 + targetsRadius) + 'px',
+                        top: String(-1 * targetsRadius / 2) + 'px',
+                        width: String(DEFAULT_NODE_WIDTH / 2 - targetsRadius * 1.5) + 'px',
+                        textAlign: Position.Left,
+                        overflow: 'hidden'
+                        //border: '1px solid black'
+                    }
+                },
                     input.name
                 );
             }
 
             let targetHandle = React.createElement(Handle, {
-                'type': 'target', 
+                'type': 'target',
                 'position': Position.Left,
                 'id': input.index,
                 'key': String(inputIndex),
@@ -193,40 +195,40 @@ function createTargets(targetJSON:any, headOffsetProzentage:number, createLabel 
     return targets;
 }
 
-function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel = false){
-    let sources:any[] = [];
+function createSources(sourceJSON: any, headOffsetProzentage: number, createLabel = false) {
+    let sources: any[] = [];
 
-    if(sourceJSON){
+    if (sourceJSON) {
         let sourceCount = sourceJSON.length;
 
-        for(let outputIndex in sourceJSON){
+        for (let outputIndex in sourceJSON) {
             let output = sourceJSON[outputIndex];
-            
+
             //Positioning in procentage from the top
-            let topPosition = headOffsetProzentage + 
-                ((100 - headOffsetProzentage) / sourceCount) * new Number(outputIndex).valueOf() + 
-                ((100 - headOffsetProzentage) / sourceCount)/2;
-            
+            let topPosition = headOffsetProzentage +
+                ((100 - headOffsetProzentage) / sourceCount) * new Number(outputIndex).valueOf() +
+                ((100 - headOffsetProzentage) / sourceCount) / 2;
+
             let label;
-            if(createLabel){
+            if (createLabel) {
                 label = React.createElement(
                     'label', {
-                        'style': {
-                            position: 'fixed',
-                            left: String(-1 * DEFAULT_NODE_WIDTH/2 + targetsRadius) + 'px',
-                            top: String(-1 * targetsRadius/2) + 'px',
-                            width: String(DEFAULT_NODE_WIDTH/2 - targetsRadius * 1.5) + 'px',
-                            textAlign: Position.Right,
-                            overflow: 'hidden'
-                            //border: '1px solid black'
-                        }
-                    },
+                    'style': {
+                        position: 'fixed',
+                        left: String(-1 * DEFAULT_NODE_WIDTH / 2 + targetsRadius) + 'px',
+                        top: String(-1 * targetsRadius / 2) + 'px',
+                        width: String(DEFAULT_NODE_WIDTH / 2 - targetsRadius * 1.5) + 'px',
+                        textAlign: Position.Right,
+                        overflow: 'hidden'
+                        //border: '1px solid black'
+                    }
+                },
                     output.name
                 );
             }
-            
+
             let sourceHandle = React.createElement(Handle, {
-                'type': 'source', 
+                'type': 'source',
                 'position': Position.Right,
                 'id': output.index,
                 'key': String(outputIndex),
@@ -248,12 +250,12 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
 /**
  * 
  */
- export function creatFancyFunctionType(dataNode:any) {
+export function creatFancyFunctionType(dataNode: any) {
     let sourceCount = dataNode.data.outputs.length;
     let targetCount = dataNode.data.inputs.length;
 
     let maxCount = sourceCount;
-    if(sourceCount < targetCount){
+    if (sourceCount < targetCount) {
         maxCount = targetCount;
     }
 
@@ -263,51 +265,53 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     //Creates nodes for in- and output
     let targets = createTargets(dataNode.data.inputs, headOffsetProzentage, true);
     let sources = createSources(dataNode.data.outputs, headOffsetProzentage, true);
-    
+
     //Create the head container, containing titel and function
     let headContainer = React.createElement(
         'div', {
-            'style': {
-                background: 'LightCyan',
-                height: String(nodeHeaderSize) + 'px'
-            }
-        }, 
-        "(" + dataNode.data.name + ")",
-        React.createElement('br'), 
-        dataNode.data.label
+        'style': {
+            padding: "10px",
+            textAlign: "center",
+            background: 'LightCyan',
+            height: String(nodeHeaderSize) + 'px'
+        }
+    },
+        dataNode.data.name
+        //React.createElement('br'), 
+        //dataNode.data.label
     );
 
     //Create the body container
     let bodyContainer = React.createElement(
         'div', {
-            'style': {
-                background: 'white',
-                height: String(maxSize - nodeHeaderSize) + 'px',
-                display: 'flex',
-                flexDirection: "row",
-                justifyContent: "center",
-                flexWrap: "wrap",
-                alignItems: "center"
-            }
+        'style': {
+            background: 'white',
+            height: String(maxSize - nodeHeaderSize) + 'px',
+            display: 'flex',
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            alignItems: "center"
         }
+    }
     );
-    
+
     let reactVueNode = React.createElement(
         'div', {
-            'style': {
-                width: String(DEFAULT_NODE_WIDTH) + 'px', 
-                height: String(maxSize) + 'px',
-                background: 'white',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid lightgray',
-                overflow: 'hidden',
-                boxShadow: dataNode.data.selected ?  
-                    "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)":
-                    "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)", 
-                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-            }
-        }, 
+        'style': {
+            width: String(DEFAULT_NODE_WIDTH) + 'px',
+            height: String(maxSize) + 'px',
+            background: 'white',
+            borderRadius: 5,
+            textAlign: 'center',
+            border: '2px solid lightgray',
+            overflow: 'hidden',
+            boxShadow: dataNode.data.selected ?
+                "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)" :
+                "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+            transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+        }
+    },
         headContainer,
         bodyContainer,
         targets,
@@ -320,8 +324,8 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
 /**
  * 
  */
- export function createFancyInputType(dataNode:any) {
-     
+export function createFancyInputType(dataNode: any) {
+
     let headerSize = 30;
     let maxSize = 50 + headerSize;
 
@@ -333,46 +337,46 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     //Create the head container, containing titel and function
     let headContainer = React.createElement(
         'div', {
-            'style': {
-                background: 'LightGoldenRodYellow',
-                height: String(headerSize) + 'px'
-            }
-        }, 
-        "(" + dataNode.data.name + ")"
+        'style': {
+            background: 'LightGoldenRodYellow',
+            height: String(headerSize) + 'px'
+        }
+    },
+        dataNode.data.name
     );
 
     //Create the body container
     let bodyContainer = React.createElement(
         'div', {
-            'style': {
-                background: 'white',
-                height: String(maxSize - headerSize) + 'px',
-                display: 'flex',
-                flexDirection: "row",
-                justifyContent: "center",
-                flexWrap: "wrap",
-                alignItems: "center"
-            }
-        }, 
+        'style': {
+            background: 'white',
+            height: String(maxSize - headerSize) + 'px',
+            display: 'flex',
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            alignItems: "center"
+        }
+    },
         dataNode.data.label
     );
 
     let reactVueNode = React.createElement(
         'div', {
-            'style': {
-                width: String(DEFAULT_NODE_WIDTH) + 'px', 
-                height: String(maxSize) +'px',
-                background: 'white',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid lightgray',
-                overflow: 'hidden',
-                boxShadow: dataNode.data.selected ? 
-                    "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)":
-                    "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)", 
-                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-            }
-        },
+        'style': {
+            width: String(DEFAULT_NODE_WIDTH) + 'px',
+            height: String(maxSize) + 'px',
+            background: 'white',
+            borderRadius: 5,
+            textAlign: 'center',
+            border: '2px solid lightgray',
+            overflow: 'hidden',
+            boxShadow: dataNode.data.selected ?
+                "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)" :
+                "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+            transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+        }
+    },
         headContainer,
         bodyContainer,
         sources
@@ -384,8 +388,8 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
 /**
  * 
  */
- export function createFancyRuleIdentifier(dataNode:any) {
-    
+export function createFancyRuleIdentifier(dataNode: any) {
+
     let headerSize = 30;
     let maxSize = 50 + headerSize;
 
@@ -397,46 +401,46 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     //Create the head container, containing titel and function
     let headContainer = React.createElement(
         'div', {
-            'style': {
-                background: 'LightPink',
-                height: String(headerSize) + 'px'
-            }
-        }, 
-        "(" + dataNode.data.name + ")"
+        'style': {
+            background: 'LightPink',
+            height: String(headerSize) + 'px'
+        }
+    },
+        dataNode.data.name
     );
 
     //Create the body container
     let bodyContainer = React.createElement(
         'div', {
-            'style': {
-                background: 'white',
-                height: String(maxSize - headerSize) + 'px',
-                display: 'flex',
-                flexDirection: "row",
-                justifyContent: "center",
-                flexWrap: "wrap",
-                alignItems: "center"
-            }
-        }, 
+        'style': {
+            background: 'white',
+            height: String(maxSize - headerSize) + 'px',
+            display: 'flex',
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            alignItems: "center"
+        }
+    },
         dataNode.data.label
     );
 
     let reactVueNode = React.createElement(
         'div', {
-            'style': {
-                width: String(DEFAULT_NODE_WIDTH) + 'px', 
-                height: String(maxSize) + 'px',
-                background: 'white',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid lightgray',
-                overflow: 'hidden',
-                boxShadow: dataNode.data.selected ? 
-                    "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)":
-                    "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)", 
-                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-            }
-        },
+        'style': {
+            width: String(DEFAULT_NODE_WIDTH) + 'px',
+            height: String(maxSize) + 'px',
+            background: 'white',
+            borderRadius: 5,
+            textAlign: 'center',
+            border: '2px solid lightgray',
+            overflow: 'hidden',
+            boxShadow: dataNode.data.selected ?
+                "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)" :
+                "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+            transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+        }
+    },
         headContainer,
         bodyContainer,
         targets,
@@ -445,37 +449,190 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     return reactVueNode;
 }
 
+const isValidHex = (hex) => /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex)
 
-export function createGroupNode(dataNode:any){
-    let headerSize = 30;
-    let maxSize = 50 + headerSize;
-    let margin = 50;
+const getChunksFromString = (st, chunkSize) => st.match(new RegExp(`.{${chunkSize}}`, "g"))
 
-    //Create the head container, containing titel and function
-    let headContainer = React.createElement(
-        'div', {
-            'style': {
-                background: 'red',
-                height: String(headerSize) + 'px'
-            }
-        }, 
-        "Group: " + dataNode.data.label
-    );
+const convertHexUnitTo256 = (hexStr) => parseInt(hexStr.repeat(2 / hexStr.length), 16)
 
-    let reactVueNode = React.createElement(
-        'div', {
-            'style': {
-                width: String(dataNode.data.width + DEFAULT_NODE_WIDTH + margin) + 'px', 
-                height: String(dataNode.data.height + maxSize + margin + headerSize) + 'px',
-                background: 'white',
-                borderRadius: 5,
-                textAlign: 'center',
-                border: '2px solid black',
-                overflow: 'hidden',
-                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-            }
+const getAlphafloat = (a, alpha) => {
+    if (typeof a !== "undefined") {return a / 255}
+    if ((typeof alpha != "number") || alpha <0 || alpha >1){
+      return 1
+    }
+    return alpha
+}
+
+
+//cerate group(color, label) farbe+label uebergeben und initial setzen
+export function createGroup(initialColor, initialLabel) {
+    console.log(initialColor.hex8)
+    let selectedNodes = store.state.selectedElements;
+
+    let gId = uuidv4();
+
+    let group = {
+        id: gId,
+        type: "group",
+        data: {
+            label: initialLabel,
+            localWidth: 0,
+            localHeight: 0,
+            groupedElementIds: [],
+            color: initialColor.hex8
         },
-        headContainer
-    );
-    return reactVueNode;
+        position: { x: 0, y: 0 },
+        className: 'light',
+        focusable: false,
+        selectable: true,
+        draggable: false,
+        style: {
+            backgroundColor: initialColor.hex8,
+            width: 0,
+            height: 0
+            //boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
+            //transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+        }
+    };
+
+    for (let node of selectedNodes) {
+        node["parentNode"] = gId;
+        //node.data.parentNode = gId;
+        group.data.groupedElementIds.push(node.id);
+        store.state.modelCheck.elements.set(node.id, node);
+    }
+
+
+    //convoluted but working way to update the reactivness of the array
+    store.state.modelCheck.elements.set(group.id, group);
+    return group;
+}
+
+export function getGroupSize(id) {
+    return store.state.modelCheck.elements.get(id);
+}
+/**
+ * 
+ * @param id 
+ * @returns 
+ */
+export function findElement(id) {
+    return store.state.modelCheck.elements.get(id);
+}
+
+/**
+ * 
+ */
+export function updateGroup(groupID) {
+    let groupNode = findElement(groupID);
+    let gEIds = groupNode ? groupNode.data.groupedElementIds : undefined;
+
+    if (groupNode) {
+
+        let margin = 25;
+
+        let newPosition = { x: undefined, y: undefined };
+        let cornerPosition = { x: undefined, y: undefined };
+
+        for (let gNodeId of gEIds) {
+            let gNode = findElement(gNodeId);
+
+            let offsetX = undefined;
+            let offsetY = undefined;
+
+            if (gNode.type === "group") {
+                offsetX = gNode.data.localWidth;
+                offsetY = gNode.data.localHeight;
+            } else {
+                let sourceCount = gNode.data.outputs ? gNode.data.outputs.length : 0;
+                let targetCount = gNode.data.inputs ? gNode.data.inputs.length : 0;
+
+                let maxCount = sourceCount;
+                if (sourceCount < targetCount) {
+                    maxCount = targetCount;
+                }
+
+                let maxSize = (stepsize * maxCount) + 25 + nodeHeaderSize;
+
+                offsetX = DEFAULT_NODE_WIDTH;
+                offsetY = maxSize;
+            }
+
+            if (!newPosition.x) { newPosition.x = gNode.position.x; }
+            if (!cornerPosition.x) { cornerPosition.x = gNode.position.x; }
+
+            if (!newPosition.y) { newPosition.y = gNode.position.y; }
+            if (!cornerPosition.y) { cornerPosition.y = gNode.position.y; }
+
+            if (newPosition.x > gNode.position.x) { newPosition.x = gNode.position.x; }
+            if (cornerPosition.x < (gNode.position.x + offsetX)) {
+                cornerPosition.x = (gNode.position.x + offsetX);
+            }
+
+            if (newPosition.y > gNode.position.y) { newPosition.y = gNode.position.y; }
+            if (cornerPosition.y < (gNode.position.y + offsetY)) {
+                cornerPosition.y = (gNode.position.y + offsetY);
+            }
+            // updateGroupNode(gNodeId, offsetX, offsetY);
+        }
+
+        newPosition.x = newPosition.x - margin;
+        newPosition.y = newPosition.y - margin;
+
+        cornerPosition.x = cornerPosition.x + margin;
+        cornerPosition.y = cornerPosition.y + margin;
+
+        let localWidth = cornerPosition.x - newPosition.x;
+        let localHeight = cornerPosition.y - newPosition.y;
+
+        if (localWidth < 0) {
+            localWidth = localWidth * -1;
+        }
+
+        if (localHeight < 0) {
+            localHeight = localHeight * -1;
+        }
+
+        groupNode.position = newPosition;
+        groupNode.data.localWidth = localWidth;
+        groupNode.data.localHeight = localHeight;
+
+        groupNode.style = {
+            backgroundColor: groupNode.data.color,
+            width: localWidth,
+            height: localHeight
+        };
+
+        store.state.modelCheck.elements.set(groupNode.id, groupNode);
+
+        if (groupNode.parentNode) {
+            updateGroup(groupNode.parentNode);
+        }
+    }
+}
+
+export function updateGroupNode(nodeID, offsetX, offsetY) {
+    let node = findElement(nodeID);
+    let gEIds = node ? node.data.groupedElementIds : undefined;
+
+    if (node) {
+        let margin = 25;
+        let newPosition = { x: undefined, y: undefined };
+        let cornerPosition = { x: undefined, y: undefined };
+
+        newPosition.x = newPosition.x + offsetX;
+        newPosition.y = newPosition.y + offsetY;
+
+        node.position = {
+            x: 0,
+            y: 0
+        }
+
+
+        node.style = {
+            backgroundColor: node.data.color,
+        };
+
+        store.state.modelCheck.elements.set(node.id, node);
+    }
 }
