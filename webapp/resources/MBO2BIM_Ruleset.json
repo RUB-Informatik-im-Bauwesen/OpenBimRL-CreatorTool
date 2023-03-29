@@ -544,22 +544,6 @@
                     ],
                     "selected": false
                 }
-            },{ 
-                "id": "cdd89598-7b15-4e22-842d-2df3fa91a25d", 
-                "type": "functionType", 
-                "data":{
-                    "name": "math.maximum",
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Finds the maximum value in a list of values.",
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"values" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"maxima" }
-                    ],
-                    "selected": false
-                }
             }
         ]
     },{
@@ -634,40 +618,6 @@
                     ],
                     "outputs": [
                         { "index": "0", "name":"Boolean_Masks_List" }
-                    ],
-                    "selected": false
-                }
-            },{ 
-                "id": "0bf44f84-6b09-4c34-982f-5aefa38dabc7", 
-                "type": "functionType", 
-                "data":{
-                    "name": "geometry.checkIncludedInBounds",
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Checks if points of a geometry are included in the the bounds of a geometic objects.",
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"Geometry_List_A" },
-                        { "index": "1", "name":"Geometry_List_B" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"Boolean_Masks_List" }
-                    ],
-                    "selected": false
-                }
-            },{ 
-                "id": "4b7a92ff-db7d-4d8a-a206-a266ae083c39", 
-                "type": "functionType", 
-                "data":{
-                    "name": "geometry.calculateClosestDistanceToBounds",
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Calculates the distance of bounds by proximity of their coordinates in cardinal directions.",
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"Geometry_List_A" },
-                        { "index": "1", "name":"Geometry_List_B" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"Distances_Lists" }
                     ],
                     "selected": false
                 }
@@ -916,24 +866,6 @@
                     "selected": false
                 }
             },{ 
-                "id": "4ad6b33d-28b7-4857-aa6d-6d03e37a12ba", 
-                "type": "functionType", 
-                "data":{
-                    "name": "geometry.calculateAStarSearch",
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Performs a shortest path search based on distances from an start node to all reachable end nodes in a graph.",
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"Edges" },
-                        { "index": "1", "name":"StartNodes" },
-                        { "index": "2", "name":"EndNodes" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"Paths" }
-                    ],
-                    "selected": false
-                }
-            },{ 
                 "id": "8f71131d-18b8-4c8c-a800-449e54a919b0", 
                 "type": "functionType", 
                 "data":{
@@ -961,22 +893,6 @@
                     "inputs": [
                         { "index": "0", "name":"Nodes" },
                         { "index": "1", "name":"Edges" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"Flag" }
-                    ],
-                    "selected": false
-                }
-            },{ 
-                "id": "766ac645-dc8f-4c07-8c7f-d7ccd5f8c176", 
-                "type": "functionType", 
-                "data":{
-                    "name": "geometry.showPaths",
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Loads the paths information and displays it in the 3D viewer.",
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"Paths" }
                     ],
                     "outputs": [
                         { "index": "0", "name":"Flag" }
@@ -1113,23 +1029,6 @@
                     "selected": false
                 }
             },{ 
-                "id": "0af69fc3-3788-4e8f-a616-7ae0ea8d82e3", 
-                "type": "functionType", 
-                "data":{
-                    "name": "list.getItemIndexInList", 
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Retrieves an item index of a specific value contained in a list of elements.", 
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"list" },
-                        { "index": "1", "name":"item" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"index" }
-                    ],
-                    "selected": false
-                }
-            },{ 
                 "id": "616f380c-576e-4c56-9a7a-f15e372a5239", 
                 "type": "functionType", 
                 "data":{
@@ -1196,23 +1095,6 @@
                     ],
                     "outputs": [
                         { "index": "0", "name":"value" }
-                    ],
-                    "selected": false
-                }
-            },{ 
-                "id": "75005c68-2d0e-497e-b521-f59c26c78cfe", 
-                "type": "functionType", 
-                "data":{
-                    "name": "list.getMapValueByKeyList", 
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Retrieve the value in a map by a list of keys.", 
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"map" },
-                        { "index": "1", "name":"keys" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"values" }
                     ],
                     "selected": false
                 }
@@ -1351,22 +1233,6 @@
                     "selected": false
                 }
             },{ 
-                "id": "d9853ab7-91bf-44e1-8cb3-ccf115b951f8", 
-                "type": "functionType", 
-                "data":{
-                    "name": "list.asList", 
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Creates a new Arraylist by converting a formated string text of values.", 
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"values" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"list" }
-                    ],
-                    "selected": false
-                }
-            },{ 
                 "id": "0f0f927e-3eea-4983-85d5-e91e9158a7ae", 
                 "type": "functionType", 
                 "data":{
@@ -1380,23 +1246,6 @@
                     ],
                     "outputs": [
                         { "index": "0", "name":"Joined_List" }
-                    ],
-                    "selected": false
-                }
-            },{ 
-                "id": "5d074575-493f-42cf-a31a-64428d77fae5", 
-                "type": "functionType", 
-                "data":{
-                    "name": "list.repeatAsList", 
-                    "icon": "exclamation-circle-fill", 
-                    "description": "Creates a new ArrayList of repeated items of a certain amount.", 
-                    "label": "Example Text Here",
-                    "inputs": [
-                        { "index": "0", "name":"Item" },
-                        { "index": "1", "name":"Repeat Counter" }
-                    ],
-                    "outputs": [
-                        { "index": "0", "name":"ArrayList" }
                     ],
                     "selected": false
                 }

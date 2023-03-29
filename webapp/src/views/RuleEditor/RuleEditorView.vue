@@ -1,13 +1,8 @@
 <template>
     <div>
         <div id="ruleEditor">
-            <reactflowTopMenu class="ptree" 
-                @callNotify="callNotify">
-            </reactflowTopMenu>
-            <reactflowviewer class="viewer" 
-                ref="graphViewer"
-                :currentfile="$store.state.currentfile"
-            ></reactflowviewer>
+            <reactflowTopMenu class="ptree"></reactflowTopMenu>
+            <reactflowviewer class="viewer" :currentfile="$store.state.currentfile"></reactflowviewer>
             <modelCheckView></modelCheckView>
         </div>
     </div>
@@ -36,11 +31,6 @@ export default {
     },
 
     methods: {
-
-        callNotify(){
-            this.$refs.graphViewer.notify();
-        },
-
         /*
         addItem: function(filename){
             this.filenames.push({

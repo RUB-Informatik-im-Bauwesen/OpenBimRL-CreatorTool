@@ -1,7 +1,5 @@
-import * as React from 'react';
+import React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
-import { v4 as uuidv4 } from 'uuid';
-import store from "../store.js";
 
 /**
  * @author Marcel Stepien
@@ -270,15 +268,13 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     let headContainer = React.createElement(
         'div', {
             'style': {
-                padding: "10px",
-                textAlign: "center",
                 background: 'LightCyan',
                 height: String(nodeHeaderSize) + 'px'
             }
         }, 
-        dataNode.data.name
-        //React.createElement('br'), 
-        //dataNode.data.label
+        "(" + dataNode.data.name + ")",
+        React.createElement('br'), 
+        dataNode.data.label
     );
 
     //Create the body container
@@ -342,7 +338,7 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
                 height: String(headerSize) + 'px'
             }
         }, 
-        dataNode.data.name
+        "(" + dataNode.data.name + ")"
     );
 
     //Create the body container
@@ -406,7 +402,7 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
                 height: String(headerSize) + 'px'
             }
         }, 
-        dataNode.data.name
+        "(" + dataNode.data.name + ")"
     );
 
     //Create the body container
@@ -449,143 +445,37 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     return reactVueNode;
 }
 
-/**
- * 
- */
-export function createGroup(){
-    let selectedNodes = store.state.selectedElements;
 
-    let gId = uuidv4();
+export function createGroupNode(dataNode:any){
+    let headerSize = 30;
+    let maxSize = 50 + headerSize;
+    let margin = 50;
 
-    let group = {
-        id: gId,
-        type: "group",
-        data: { 
-            label: 'Example Group Label', 
-            localWidth: 0, 
-            localHeight: 0, 
-            groupedElementIds: [], 
-            color: 'rgba(0, 255, 0, 0.2)' 
+    //Create the head container, containing titel and function
+    let headContainer = React.createElement(
+        'div', {
+            'style': {
+                background: 'red',
+                height: String(headerSize) + 'px'
+            }
+        }, 
+        "Group: " + dataNode.data.label
+    );
+
+    let reactVueNode = React.createElement(
+        'div', {
+            'style': {
+                width: String(dataNode.data.width + DEFAULT_NODE_WIDTH + margin) + 'px', 
+                height: String(dataNode.data.height + maxSize + margin + headerSize) + 'px',
+                background: 'white',
+                borderRadius: 5,
+                textAlign: 'center',
+                border: '2px solid black',
+                overflow: 'hidden',
+                transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+            }
         },
-        position: { x: 0, y: 0 },
-        className: 'light',
-        style: { 
-            backgroundColor: 'rgba(0, 255, 0, 0.2)', 
-            width: 0, 
-            height: 0
-            //boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
-            //transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
-        }
-    };
-
-    for(let node of selectedNodes){
-        node["parentNode"] = gId;
-        //node.data.parentNode = gId;
-        group.data.groupedElementIds.push(node.id);
-        store.state.modelCheck.elements.set(node.id, node);
-    }
-
-    //convoluted but working way to update the reactivness of the array
-    store.state.modelCheck.elements.set(group.id, group);
-
-    return group;
-}
-
-/**
- * 
- * @param id 
- * @returns 
- */
-export function findElement(id){
-    return store.state.modelCheck.elements.get(id);
-}
-
-/**
- * 
- */
-export function updateGroup(groupID){
-    let groupNode = findElement(groupID);
-    let gEIds = groupNode ? groupNode.data.groupedElementIds : undefined;
-
-    if(groupNode){
-
-        let margin = 25;
-        
-        let newPosition = { x: undefined, y: undefined };
-        let cornerPosition = { x: undefined, y: undefined };
-
-        for(let gNodeId of gEIds){
-            let gNode = findElement(gNodeId);
-
-            let offsetX = undefined;
-            let offsetY = undefined;
-
-            if(gNode.type === "group"){
-                offsetX = gNode.data.localWidth;
-                offsetY = gNode.data.localHeight;
-            }else{
-                let sourceCount = gNode.data.outputs ? gNode.data.outputs.length : 0;
-                let targetCount = gNode.data.inputs ? gNode.data.inputs.length : 0;
-                
-                let maxCount = sourceCount;
-                if(sourceCount < targetCount){
-                    maxCount = targetCount;
-                }
-                
-                let maxSize = (stepsize * maxCount) + 25 + nodeHeaderSize;
-
-                offsetX = DEFAULT_NODE_WIDTH;
-                offsetY = maxSize;
-            }
-            
-            if(!newPosition.x){ newPosition.x = gNode.position.x; }
-            if(!cornerPosition.x){ cornerPosition.x = gNode.position.x; }
-
-            if(!newPosition.y){ newPosition.y = gNode.position.y; }
-            if(!cornerPosition.y){ cornerPosition.y = gNode.position.y; }
-
-            if(newPosition.x > gNode.position.x){ newPosition.x = gNode.position.x; }
-            if(cornerPosition.x < (gNode.position.x + offsetX)){ 
-                cornerPosition.x = (gNode.position.x + offsetX); 
-            }
-
-            if(newPosition.y > gNode.position.y){ newPosition.y = gNode.position.y; }
-            if(cornerPosition.y < (gNode.position.y + offsetY)){ 
-                cornerPosition.y = (gNode.position.y + offsetY); 
-            }
-        }
-
-        newPosition.x = newPosition.x - margin;
-        newPosition.y = newPosition.y - margin;
-        
-        cornerPosition.x = cornerPosition.x + margin;
-        cornerPosition.y = cornerPosition.y + margin;
-        
-        let localWidth = cornerPosition.x - newPosition.x;
-        let localHeight = cornerPosition.y - newPosition.y;
-
-        if(localWidth < 0){
-            localWidth = localWidth * -1;
-        }
-
-        if(localHeight < 0){
-            localHeight = localHeight * -1;
-        }
-
-        groupNode.position = newPosition;
-        groupNode.data.localWidth = localWidth;
-        groupNode.data.localHeight = localHeight;
-
-        groupNode.style = { 
-            backgroundColor: groupNode.data.color, 
-            width: localWidth, 
-            height: localHeight
-        };
-
-        store.state.modelCheck.elements.set(groupNode.id, groupNode);
-
-        if(groupNode.parentNode){
-            updateGroup(groupNode.parentNode);
-        }
-    }
+        headContainer
+    );
+    return reactVueNode;
 }

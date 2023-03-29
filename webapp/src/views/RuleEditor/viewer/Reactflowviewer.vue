@@ -3,7 +3,7 @@
         <reactFlow 
             id="reactflowviewer" 
             style="width: 100%; height: 100%;" 
-            :elements="localElements" 
+            :elements="$store.state.modelCheck.elements" 
             :nodeTypes="nodeTypes"
             :onMove="onMove"
             :onDragOver="onDragOver"
@@ -13,7 +13,6 @@
             :onSelectionChange="onSelectionChange"
             :onNodeDoubleClick="onNodeDoubleClick"
             :onNodeDragStop="onNodeDragStop"
-            :onNodeDrag="onNodeDrag"
             :defaultZoom="$store.state.viewer.currentZoom" 
             :minZoom="$store.state.viewer.minZoom" 
             :maxZoom="$store.state.viewer.maxZoom">
@@ -42,7 +41,7 @@
 import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements } from 'react-flow-renderer';
 import Reactflowcontrols from './Reactflowcontrols.vue';
 import Reactflowbackground from './Reactflowbackground.vue';
-import Parser, { createUniqueID } from '../../../core/ParserOpenBIMRL.ts';
+import Parser, { createUniqueID } from '/webapp/src/core/ParserOpenBIMRL.ts';
 import { 
     DEFAULT_NODE_WIDTH,
     //createInputType, 
@@ -51,9 +50,9 @@ import {
     creatFancyFunctionType, 
     createFancyInputType, 
     createFancyRuleIdentifier,
-    updateGroup
-} from "../../../core/CustomNodeSetup.ts";
-import exampleData from "../../../../resources/defaultGraphExample.json";
+    createGroupNode
+} from "/webapp/src/core/CustomNodeSetup.ts";
+import exampleData from "/webapp/resources/defaultGraphExample.json";
 import xmljs from 'xml-js';
 
 export default {
@@ -68,32 +67,18 @@ export default {
             nodeTypes: { //Sets the NodeStyles dispayed
                 inputType : createFancyInputType, 
                 functionType : creatFancyFunctionType, 
-                ruleIdentifier : createFancyRuleIdentifier
+                ruleIdentifier : createFancyRuleIdentifier,
+                groupNode: createGroupNode
                 //inputType : createInputType,
                 //functionType : createFunctionType,
                 //ruleIdentifier : createRuleIdentifier
-            },
-            localElements: []
+            }
         }
     },
     methods: {
-        onNodeDrag(event, node){
-            let storedNode = this.findElement(node.id);
-            storedNode.position = node.position;
-            
-            if(storedNode.parentNode){
-                updateGroup(storedNode.parentNode);
-                this.notify();
-            }
-        },
         onNodeDragStop(event, node){
             let storedNode = this.findElement(node.id);
             storedNode.position = node.position;
-
-            if(storedNode.parentNode){
-                updateGroup(storedNode.parentNode);
-                this.notify();
-            }
         },
         /* onMove: updates the position of the pane transformation to update the background rendering. */
         onMove(position){
@@ -139,11 +124,7 @@ export default {
                 nodeTemplateInstance.id = createUniqueID(); 
 
                 //add node to scene and reload elements
-                this.$store.state.modelCheck.elements.set(nodeTemplateInstance.id, nodeTemplateInstance);
-
-                this.localElements = Array.from(
-                    this.$store.state.modelCheck.elements.values()
-                );
+                this.$store.state.modelCheck.elements = this.$store.state.modelCheck.elements.concat([nodeTemplateInstance]);
             }
         },
         /* onEdgeUpdate: update and relace edge instance */
@@ -177,13 +158,7 @@ export default {
                     "strokeWidth" : 4
                 }
             }
-            
-            this.$store.state.modelCheck.elements.set(newEdge.id, newEdge);
-
-            this.localElements = Array.from(
-                this.$store.state.modelCheck.elements.values()
-            );
-
+            this.$store.state.modelCheck.elements = this.$store.state.modelCheck.elements.concat([newEdge]);
         },
         /* onNodeDoubleClick: displays a modal input menu for the selected node */
         onNodeDoubleClick(event, node){
@@ -224,57 +199,29 @@ export default {
         },
         /* deleteSelectedElements: deletes the current selection from the scene */
         deleteSelectedElements(){
-            let eleArr = Array.from(this.$store.state.modelCheck.elements.values());
-            let currentKeys = Array.from(this.$store.state.modelCheck.elements.keys());
-            let selection = this.$store.state.selectedElements;
-
             //Returns an array of elements without the ones from elementsToRemove. 
             //Also removes all incoming/outgoing edges.
-            let reducedList = removeElements(
-                selection, 
-                eleArr
+            this.$store.state.modelCheck.elements = removeElements(
+                this.$store.state.selectedElements, 
+                this.$store.state.modelCheck.elements
             ); 
-
-            for(let activeElement of reducedList){
-                const index = currentKeys.indexOf(activeElement.id);
-                if (index > -1) { // only splice array when item is found
-                    currentKeys.splice(index, 1); // 2nd parameter means remove one item only
-                }
-            }
-            
-            for(let removedElementKey of currentKeys){
-                this.$store.state.modelCheck.elements.delete(removedElementKey);
-            }
-            
-            this.localElements = reducedList;
         },
         findElement(id){
-            return this.$store.state.modelCheck.elements.get(id);
+            for(let index in this.$store.state.modelCheck.elements){
+                let element = this.$store.state.modelCheck.elements[index];
+                if(element.id === id){
+                    return element;
+                }
+            }
         },
         handleRenderBGGrid(){
             this.$store.state.settings.renderBackground = !this.$store.state.settings.renderBackground;
-        },
-        notify(){
-            //manuel update to handle reactivity of maps
-            this.localElements = Array.from(
-                this.$store.state.modelCheck.elements.values()
-            );
         }
     },
     mounted: function () {
         //Load sample data when mounted
-        if(this.$store.state.modelCheck.elements.size === 0){
-            
-            this.localElements = exampleData.elements;
-            let elements = exampleData.elements;
-            this.$store.state.modelCheck.elements = new Map();
-            for(let ele of elements){
-                this.$store.state.modelCheck.elements.set(ele.id, ele);
-            }
-
-            this.$store.state.modelCheck.subChecks = exampleData.subChecks;
-            this.$store.state.modelCheck.resultSets = exampleData.resultSets;
-
+        if(this.$store.state.modelCheck.elements.length === 0){
+            this.$store.state.modelCheck = exampleData;
             this.$store.state.subChecks = [{
                 id: "0",
                 name: "Absatz 1: Test Prüfung",
@@ -322,12 +269,7 @@ export default {
                 
                 let opts = this.$store.state.settings;
                 let parser = new Parser();
-                let elements = parser.parse(jsonData, opts);
-
-                this.$store.state.modelCheck.elements = new Map();
-                for(let ele of elements){
-                    this.$store.state.modelCheck.elements.set(ele.id, ele);
-                }
+                this.$store.state.modelCheck.elements = parser.parse(jsonData, opts);
             }); //response.json()
         }
     },

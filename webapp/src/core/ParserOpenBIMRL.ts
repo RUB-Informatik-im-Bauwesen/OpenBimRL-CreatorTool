@@ -16,29 +16,23 @@ export default class Parser {
      * @param elements 
      */
     build(elements, subChecks, resultSets, name){
-        
         let rootString = 
             "<?xml version='1.0' encoding='utf-8'?>" +
-            "<BIMRule " + 
+            "<tns:BIMRule " + 
             "schemaVersion='0.1' " +
-            "xmlns='http://inf.bi.rub.de/OpenBimRL' " + 
+            "xmlns:tns='http://inf.bi.rub.de/OpenBimRL' " + 
             "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' " + 
             "xsi:schemaLocation='http://inf.bi.rub.de/OpenBimRL OpenBimRL.xsd'>" +
-            "</BIMRule>";
-        
+            "</tns:BIMRule>";
+
         let parser = new DOMParser();
         let xmlDoc = parser.parseFromString(rootString, "text/xml");
-        
-        let root = xmlDoc.getElementsByTagName("BIMRule");
-        let nodePrecalculations = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Precalculations");
 
-        let nodeModelCheck = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "ModelCheck");
+        let nodePrecalculations = xmlDoc.createElement("tns:Precalculations");
+        let nodeModelCheck = xmlDoc.createElement("tns:ModelCheck");
         nodeModelCheck.setAttribute("name", name);
-        
-        root[0].appendChild(nodePrecalculations);
-        root[0].appendChild(nodeModelCheck);
 
-        let nodeRuleIdentifiers = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "RuleIdentifiers");
+        let nodeRuleIdentifiers = xmlDoc.createElement("tns:RuleIdentifiers");
         nodeModelCheck.appendChild(nodeRuleIdentifiers);
         
         let ruleIdentifierIds:any = {};
@@ -52,7 +46,7 @@ export default class Parser {
             let el = filteredNodes[index];
 
             if(el.type === "ruleIdentifier"){
-                let n = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "RuleIdentifier");
+                let n = xmlDoc.createElement("tns:RuleIdentifier");
                 n.setAttribute("label", el.data.label);
 
                 //memorize id for filtering
@@ -60,7 +54,7 @@ export default class Parser {
 
                 nodeRuleIdentifiers.appendChild(n);
             }else{
-                let n = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Node");
+                let n = xmlDoc.createElement("tns:Node");
                 n.setAttribute("id", el.id);
 
                 if(el.data){
@@ -72,10 +66,10 @@ export default class Parser {
                 }
                 
                 if(el.data.inputs){
-                    let inputs = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Inputs");
+                    let inputs = xmlDoc.createElement("tns:Inputs");
                     for(let inputIndex in el.data.inputs){
                         let inputObj = el.data.inputs[inputIndex];
-                        let input = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Input");
+                        let input = xmlDoc.createElement("tns:Input");
                         input.setAttribute("name", inputObj.name);
 
                         if(inputObj.value){ //set value instead, if it exists
@@ -91,11 +85,11 @@ export default class Parser {
                 }
                 
                 if(el.data.outputs){
-                    let outputs = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Outputs");
+                    let outputs = xmlDoc.createElement("tns:Outputs");
                     for(let outputIndex in el.data.outputs){
                         let outputObj = el.data.outputs[outputIndex];
 
-                        let output = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Output");
+                        let output = xmlDoc.createElement("tns:Output");
                         output.setAttribute("name", outputObj.name);
 
                         if(outputObj.value){ 
@@ -141,7 +135,7 @@ export default class Parser {
 
             }else{
 
-                let e = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Edge");
+                let e = xmlDoc.createElement("tns:Edge");
                 e.setAttribute("id", el.id);
 
                 e.setAttribute("source", el.source);
@@ -158,18 +152,18 @@ export default class Parser {
             }
         }
 
-        let nodeModelSubChecks = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "ModelSubChecks");
+        let nodeModelSubChecks = xmlDoc.createElement("tns:ModelSubChecks");
         nodeModelCheck.appendChild(nodeModelSubChecks);
 
         for(let index in subChecks){
             let subCheck = subChecks[index];
-            let nodeModelSubCheck = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "ModelSubCheck");
+            let nodeModelSubCheck = xmlDoc.createElement("tns:ModelSubCheck");
             nodeModelSubCheck.setAttribute("name", subCheck.name);
             nodeModelSubChecks.appendChild(nodeModelSubCheck);
 
             if(typeof subCheck.applicability !== 'undefined'){
                 if(subCheck.applicability.length > 0){
-                    let nodeApplicability = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Applicability");
+                    let nodeApplicability = xmlDoc.createElement("tns:Applicability");
                     nodeModelSubCheck.appendChild(nodeApplicability);
 
                     this.handleRulesOrRuleSets(xmlDoc, nodeApplicability, subCheck.applicability);
@@ -184,16 +178,20 @@ export default class Parser {
         }
 
         
-        let nodeResultSets = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "ResultSets");
+        let nodeResultSets = xmlDoc.createElement("tns:ResultSets");
         nodeModelCheck.appendChild(nodeResultSets);
         for(let index in resultSets){
             let resultSet = resultSets[index];
-            let nodeResultSet = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "ResultSet");
+            let nodeResultSet = xmlDoc.createElement("tns:ResultSet");
             nodeResultSet.setAttribute("name", resultSet.name);
             nodeResultSet.setAttribute("elements", resultSet.elements);
             nodeResultSet.setAttribute("filter", resultSet.filter);
             nodeResultSets.appendChild(nodeResultSet);
         }
+
+        let root = xmlDoc.getElementsByTagName("tns:BIMRule");
+        root[0].appendChild(nodePrecalculations);
+        root[0].appendChild(nodeModelCheck);
 
         let serializer = new XMLSerializer();
         let xmlString = serializer.serializeToString(xmlDoc);
@@ -206,7 +204,7 @@ export default class Parser {
             let ruleOrRuleSet = rulesOrRuleSets[index];
 
             if(ruleOrRuleSet.type === 'rule'){
-                let nodeRule = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Rule");
+                let nodeRule = xmlDoc.createElement("tns:Rule");
                 
                 if(typeof ruleOrRuleSet.label !== 'undefined'){
                     if(ruleOrRuleSet.label !== ""){
@@ -227,7 +225,7 @@ export default class Parser {
             }
 
             if(ruleOrRuleSet.type === 'ruleSet'){
-                let nodeRules = xmlDoc.createElementNS("http://inf.bi.rub.de/OpenBimRL", "Rules");
+                let nodeRules = xmlDoc.createElement("tns:Rules");
                 
                 if(typeof ruleOrRuleSet.label !== 'undefined'){
                     if(ruleOrRuleSet.label !== ""){
@@ -250,10 +248,10 @@ export default class Parser {
      * @returns 
      */
     parse(data:any, opts:any){
-        let bimRule = data["BIMRule"];
-        let precalculations = bimRule["Precalculations"];
-        let ns = precalculations["Node"];
-        let es = precalculations["Edge"];
+        let bimRule = data["tns:BIMRule"];
+        let precalculations = bimRule["tns:Precalculations"];
+        let ns = precalculations["tns:Node"];
+        let es = precalculations["tns:Edge"];
 
         var graphElements:any[] = [];
         var nodeMap:any = {};
@@ -265,8 +263,8 @@ export default class Parser {
                 let n = ns[index];
 
                 let inputHandles:any[] = [];
-                if(typeof n["Inputs"] !== 'undefined'){
-                    let ihs = n["Inputs"]["Input"];
+                if(typeof n["tns:Inputs"] !== 'undefined'){
+                    let ihs = n["tns:Inputs"]["tns:Input"];
                     
                     if(!Array.isArray(ihs)){
                         ihs = [ihs];
@@ -282,8 +280,8 @@ export default class Parser {
                 }
 
                 let outputHandles:any[] = [];
-                if(typeof n["Outputs"] !== 'undefined'){
-                    let ohs = n["Outputs"]["Output"];
+                if(typeof n["tns:Outputs"] !== 'undefined'){
+                    let ohs = n["tns:Outputs"]["tns:Output"];
 
                     if(!Array.isArray(ohs)){
                         ohs = [ohs];
@@ -308,7 +306,7 @@ export default class Parser {
                 //TODO: should be identified by a specific type identifier, not inputs and outputs
                 if(inputHandles.length == 0 && outputHandles.length == 1){
                     nT = 'inputType';
-                    nCustomLbl = n["Outputs"]["Output"]._attributes["value"];
+                    nCustomLbl = n["tns:Outputs"]["tns:Output"]._attributes["value"];
                 }else{
                     //Set an Alias for function nodes, if it exists
                     if(n._attributes.alias){
@@ -340,8 +338,8 @@ export default class Parser {
                 let eAttr = e._attributes;
 
                 let sourceNode = nodeMap[eAttr.source];
-                if(typeof sourceNode["Outputs"] !== 'undefined'){
-                    let outputHandle = sourceNode["Outputs"]["Output"];
+                if(typeof sourceNode["tns:Outputs"] !== 'undefined'){
+                    let outputHandle = sourceNode["tns:Outputs"]["tns:Output"];
                     if(!Array.isArray(outputHandle)){
                         outputHandle = [outputHandle];
                     }
@@ -353,8 +351,8 @@ export default class Parser {
                 }
 
                 let targetNode = nodeMap[eAttr.target];
-                if(typeof targetNode["Inputs"] !== 'undefined'){
-                    let inputHandle = targetNode["Inputs"]["Input"];
+                if(typeof targetNode["tns:Inputs"] !== 'undefined'){
+                    let inputHandle = targetNode["tns:Inputs"]["tns:Input"];
                     if(!Array.isArray(inputHandle)){
                         inputHandle = [inputHandle];
                     }
@@ -374,10 +372,10 @@ export default class Parser {
             }
         }
 
-        let modelCheck = bimRule["ModelCheck"];
-        let ruleIdentifiers = modelCheck["RuleIdentifiers"];
+        let modelCheck = bimRule["tns:ModelCheck"];
+        let ruleIdentifiers = modelCheck["tns:RuleIdentifiers"];
         if(opts.enableRuleIdentifier){
-            let rIArr = ruleIdentifiers["RuleIdentifier"];
+            let rIArr = ruleIdentifiers["tns:RuleIdentifier"];
 
             for(let index in rIArr){
                 let rI = rIArr[index];
@@ -446,10 +444,10 @@ export default class Parser {
         }
 
         let subChecks:any[] = [];
-        let modelSubChecks = modelCheck["ModelSubChecks"];
+        let modelSubChecks = modelCheck["tns:ModelSubChecks"];
         if(typeof modelSubChecks !== 'undefined'){
             
-            let subChecksArr = modelSubChecks["ModelSubCheck"];
+            let subChecksArr = modelSubChecks["tns:ModelSubCheck"];
             if(typeof subChecksArr !== 'undefined'){
                 if(!Array.isArray(subChecksArr)){
                     subChecksArr = [subChecksArr];
@@ -472,13 +470,13 @@ export default class Parser {
                     }
 
                     //Applicability
-                    let applicability = subCheck["Applicability"];
+                    let applicability = subCheck["tns:Applicability"];
                     if(applicability){
                         subCheckItem.applicability = this.parseRulesAndRuleSets(applicability);
                     }
 
                     //RulesOrRuleSets
-                    let rulesOrRuleSets = subCheck["Rules"];
+                    let rulesOrRuleSets = subCheck["tns:Rules"];
                     if(rulesOrRuleSets){
                         subCheckItem.rulesOrRuleSets = this.parseRulesAndRuleSets(subCheck);
                     }
@@ -490,9 +488,9 @@ export default class Parser {
         
         //ResultSets
         let resultSetsArr:any[] = [];
-        let resultSets = modelCheck["ResultSets"];
+        let resultSets = modelCheck["tns:ResultSets"];
         if(resultSets){
-            let resultSetArr = resultSets["ResultSet"];
+            let resultSetArr = resultSets["tns:ResultSet"];
             if(resultSetArr){
                 if(!Array.isArray(resultSetArr)){
                     resultSetArr = [resultSetArr];
@@ -530,7 +528,7 @@ export default class Parser {
     parseRulesAndRuleSets(element:any){
         let rArS:any[] = [];
 
-        let ruleSets = element["Rules"]
+        let ruleSets = element["tns:Rules"]
         if(ruleSets){
             if(!Array.isArray(ruleSets)){
                 ruleSets = [ruleSets];
@@ -557,7 +555,7 @@ export default class Parser {
             }
         }
         
-        let rules = element["Rule"]
+        let rules = element["tns:Rule"]
         if(rules){
             if(!Array.isArray(rules)){
                 rules = [rules];

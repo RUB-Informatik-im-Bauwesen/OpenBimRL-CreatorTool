@@ -33,7 +33,7 @@
                 <b-button v-b-toggle.sidebar-nodemenu variant="primary">Create Nodes</b-button>
             </b-button-group>
             <b-button-group class="mx-1">
-                <b-button @click="handleCreateGroup" variant="danger">Create Group</b-button>
+                <b-button @click="createGroup($store.state.selectedElements)">Create Group</b-button>
             </b-button-group>
 
             <!--
@@ -124,10 +124,11 @@
  * @author Marcel Stepien
  * @version 2022.11.1
  */
+
 import GraphNodeMenu from './GraphNodeMenu/GraphNodeMenu.vue';
 import Parser from '/webapp/src/core/ParserOpenBIMRL.ts';
-import { createGroup, updateGroup } from '/webapp/src/core/CustomNodeSetup.ts';
 import xmljs from 'xml-js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
     name: "ReactflowTopMenu",
@@ -144,11 +145,6 @@ export default {
     },
 
     methods: {
-        handleCreateGroup(){
-            let group = createGroup();
-            updateGroup(group.id);
-            this.$emit("callNotify");
-        },
         showFilenameModal(filetype){
             this.downloadContext.data.filetype = filetype;
             this.$bvModal.show("filename-input-modal");
@@ -157,14 +153,8 @@ export default {
             this.$bvModal.hide("filename-input-modal");
             
             if(this.downloadContext.data.filetype === 'json'){
-                let localModelCheck = {
-                    elements: Array.from(this.$store.state.modelCheck.elements.values()),
-                    subChecks: this.$store.state.modelCheck.subChecks,
-                    resultSets: this.$store.state.modelCheck.resultSets
-                };
-
                 let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(
-                    localModelCheck
+                    this.$store.state.modelCheck
                 ));
                 let dlAnchorElem = document.getElementById('downloadAnchorElem');
                 dlAnchorElem.setAttribute("href", dataStr );
@@ -177,7 +167,7 @@ export default {
             
                 let dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(
                     parser.build(
-                        Array.from(this.$store.state.modelCheck.elements.values()),
+                        this.$store.state.modelCheck.elements,
                         this.$store.state.modelCheck.subChecks,
                         this.$store.state.modelCheck.resultSets,
                         this.downloadContext.data.filename
@@ -198,18 +188,11 @@ export default {
             document.getElementById('uploadXMLAnchorElem').click();
         },
         uploaderOnChange(event, filetype){
-            let _self = this;
             let reader = new FileReader();
             reader.onload = (event) => {
                 if(filetype === 'json'){
                     let obj = JSON.parse(event.target.result);
-
-                    _self.$store.state.modelCheck.elements = new Map();
-                    for(let ele of obj.elements){
-                        _self.$store.state.modelCheck.elements.set(ele.id, ele);
-                    }
-                    _self.$store.state.modelCheck.subChecks = obj.subChecks;
-                    _self.$store.state.modelCheck.resultSets = obj.resultSets;
+                    this.$store.state.modelCheck = obj;
                 }
 
                 if(filetype === 'xml'){
@@ -222,26 +205,18 @@ export default {
                     let result = parser.parse(jsonData, opts);
 
                     //Load into storage
-                    let elements = result.elements;
-                    _self.$store.state.modelCheck.elements = new Map();
-                    for(let ele of elements){
-                        _self.$store.state.modelCheck.elements.set(ele.id, ele);
-                    }
-
-                    _self.$store.state.modelCheck.subChecks = result.subChecks;
-                    _self.$store.state.modelCheck.resultSets = result.resultSets;
+                    this.$store.state.modelCheck.elements = result.elements;
+                    this.$store.state.modelCheck.subChecks = result.subChecks;
+                    this.$store.state.modelCheck.resultSets = result.resultSets;
                 }
-
-                _self.$emit("callNotify");
             };
             reader.readAsText(event.target.files[0]);
         },
         createNewAction(event){
-            this.$store.state.modelCheck.elements = new Map();
+            this.$store.state.modelCheck.elements = [];
             this.$store.state.modelCheck.subChecks = [];
             this.$store.state.modelCheck.resultSets = [];
             this.hideModal();
-            this.$emit("callNotify");
         },
         showModal() {
             this.$refs['createNew-modal'].show();
@@ -249,6 +224,65 @@ export default {
         hideModal() {
             this.$refs['createNew-modal'].hide();
         },
+
+        createGroup(nodeList){
+
+            let xMax, xMin, yMax, yMin;
+            let groupId = uuidv4();
+
+            let updatedNodes = [];
+            for(let node of nodeList){
+               let x = node.position.x;
+               let y = node.position.y; 
+
+               if(xMax === undefined || xMax < x){
+                xMax = x;
+               }
+               if(yMax === undefined || yMax < y){
+                yMax = y;
+               }
+               if(xMin === undefined || xMin > x){
+                xMin = x;
+               }
+                if(yMin === undefined || yMin > y){
+                yMin = y;
+               }
+
+               node.parentNode = groupId;
+               node.extent = 'parent';
+               updatedNodes.push(node);
+            }
+
+            let groupData = {
+                id: groupId,
+                data: {
+                    label: "Eine Neue Gruppe",
+                    name: "group",
+                    selected: true,
+                    width: (xMax-xMin),
+                    height: (yMax-yMin)
+                },
+                position: {
+                    x: xMin - 25,
+                    y: yMin - 30 - 25
+                },
+                type: "groupNode"
+            }
+
+            console.log(this.$store.state.modelCheck.elements);
+            //this.$store.state.modelCheck.elements.push(groupData);
+            let filterFunction = function(n, list){
+                for(let sN of list) {
+                    if(sN.id === n.id){
+                        return false;
+                    }
+                }
+                return true;
+            }
+            this.$store.state.modelCheck.elements = this.$store.state.modelCheck.elements.filter(
+                n => { return filterFunction(n, nodeList) }
+            ).concat([groupData]).concat(updatedNodes);
+        }
     },
 
     mounted() {
