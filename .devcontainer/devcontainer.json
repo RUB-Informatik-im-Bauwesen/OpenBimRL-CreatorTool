@@ -17,7 +17,8 @@
 				"Vue.volar",
 				"Vue.vscode-typescript-vue-plugin",
 				"csstools.postcss",
-				"bradlc.vscode-tailwindcss"
+				"bradlc.vscode-tailwindcss",
+				"esbenp.prettier-vscode"
 			]
 		}
 	}
