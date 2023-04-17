@@ -3,7 +3,7 @@ import Flowchart from './components/Flowchart.vue'
 </script>
 
 <template>
-  <Flowchart style="height: 90vh;" />
+  <Flowchart class="h-screen" />
 </template>
 
 <style scoped>
