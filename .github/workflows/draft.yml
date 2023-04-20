@@ -1,0 +1,45 @@
+name: Create new Draft
+run-name: ${{ github.actor }} created a new draft
+on:
+    push:
+        branches:
+            - v*
+
+jobs:
+    create_release:
+        defaults:
+            run:
+                shell: bash
+                working-directory: webapp
+
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "18"
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Auto-format
+              run: npm run format
+
+            - name: build app
+              run: npm run build
+
+            - name: Create npm patch
+              id: create_npm_patch
+              run: |
+                  echo "VERSION=$(npm version patch)" >> "$GITHUB_OUTPUT"
+
+            - run: |
+                  git config user.name github-actions
+                  git config user.email github-actions@github.com
+                  git add .
+                  git commit -m "automatically generated patch event"
+                  git push
+            
+            - run: gh pr create --title "releasing ${{ github.ref }}" --body "please approve to merge on master" --base master --head "${{ github.ref }}"
+            

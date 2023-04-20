@@ -29,21 +29,7 @@ jobs:
       - name: zip build
         run: zip -r build.zip dist
 
-      - name: Create npm patch
-        id: create_npm_patch
-        run: |
-          echo "VERSION=$(npm version patch)" >> "$GITHUB_OUTPUT"
-
-      - run: echo "${{ steps.create_npm_patch.outputs.VERSION  }}"
-
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "generated"
-          git push --force
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create ${{ steps.create_npm_patch.outputs.VERSION }} ./build.zip
+        run: gh release create ${{ github.ref }} ./build.zip
