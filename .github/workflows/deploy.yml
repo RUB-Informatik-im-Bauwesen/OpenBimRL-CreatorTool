@@ -1,37 +1,41 @@
-name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
+name: Create new Release
+run-name: ${{ github.actor }} created a new release
 on:
   push:
     branches:
       - master
 
 jobs:
-  create_release_branch:
+  create_release:
     defaults:
         run:
             shell: bash
-            working-directory: scripts
+            working-directory: webapp
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create Release
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '18'
       - run: npm ci
       - run: npm version patch
+
       - name: Set verion env
         id: set_version_env
         run: |
           echo "VERSION=$(npm pkg get version)" >> $GITHUB_ENV
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Commit updated version
+        run: |
+          git config --global user.name 'Actions Bot'
+          git config --global user.email 'actions-bot@users.noreply.github.com'
+          git commit -am "Automated push"
+          git push
+
+      - name: Create release
         env:
-          GITHUB_TOKEN: ${{ secrets.token }}
-        with:
-          tag_name: ${{ env.VERSION }}
-          release_name: ${{ env.VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "$GITHUB_REF_NAME" --notes "Directus $GITHUB_REF_NAME"
