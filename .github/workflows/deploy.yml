@@ -27,7 +27,7 @@ jobs:
         run: npm run build
 
       - name: zip build
-        run: zip -r build.zip -R dist
+        run: zip -r build.zip dist
 
       - name: Create npm patch
         id: create_npm_patch
