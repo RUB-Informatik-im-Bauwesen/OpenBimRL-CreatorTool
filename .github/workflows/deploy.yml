@@ -23,19 +23,19 @@ jobs:
       - run: npm ci
       - run: npm version patch
 
-      - name: Set verion env
+      - name: Set version env
         id: set_version_env
         run: |
           echo "VERSION=$(npm pkg get version)" >> $GITHUB_ENV
 
       - name: Commit updated version
         run: |
-          git config --global user.name 'Actions Bot'
-          git config --global user.email 'actions-bot@users.noreply.github.com'
+          git config --global user.name 'Florian Becker'
+          git config --global user.email 'florianb-de@users.noreply.github.com'
           git commit -am "Automated push"
           git push
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "$GITHUB_REF_NAME" --notes "Directus $GITHUB_REF_NAME"
+        run: gh release create "$env.VERSION"
