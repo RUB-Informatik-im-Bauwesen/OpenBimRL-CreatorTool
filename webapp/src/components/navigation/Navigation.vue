@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Upload from "./Upload.vue";
+import Dropdown from "./Dropdown.vue";
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import Upload from "./Upload.vue";
       <li><button class="nav-button">New</button></li>
       <li>
         <div class="flex gap-1">
-          <Upload />
+          <Dropdown>Upload</Dropdown>
           <button class="nav-button">Download</button>
         </div>
       </li>

@@ -1,6 +1,6 @@
 import { Ref, ref, defineExpose } from "vue";
 
-export { default as Upload } from "./Upload.vue";
+export { default as DropdownModal } from "./DropdownModal.vue";
 
 const modals: Array<Ref<boolean>> = [];
 
