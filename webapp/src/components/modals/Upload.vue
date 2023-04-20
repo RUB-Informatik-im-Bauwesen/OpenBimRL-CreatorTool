@@ -1,16 +1,17 @@
 <template>
-    <div class="anchor">
-        <dialog class="absolute block aspect-square w-16 bg-red-800" :class="{hidden: !active}"></dialog>
-    </div>
+  <div class="anchor">
+    <dialog
+      class="absolute block aspect-square w-16 bg-red-800"
+      :class="{ hidden: !active }"
+    ></dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { registerModal } from '.';
+import { registerModal } from ".";
 
-const active = registerModal()
+const active = registerModal();
 defineExpose({ active });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,11 +1,12 @@
 <template>
-    <button class="nav-button" @click.stop="activateModal">
-        <span>Upload
-        <ChevronUpIcon v-if="modal?.active" class="h-4 w-4 inline" />
-        <ChevronDownIcon v-else class="h-4 w-4 inline" />
-        </span>
-    </button>
-    <UploadModal ref="modal" />
+  <button class="nav-button" @click.stop="activateModal">
+    <span
+      >Upload
+      <ChevronUpIcon v-if="modal?.active" class="h-4 w-4 inline" />
+      <ChevronDownIcon v-else class="h-4 w-4 inline" />
+    </span>
+  </button>
+  <UploadModal ref="modal" />
 </template>
 
 <script setup lang="ts">

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Upload from './Upload.vue';
-
+import Upload from "./Upload.vue";
 </script>
 
 <template>
