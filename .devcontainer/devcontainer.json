@@ -21,7 +21,8 @@
 				"sdras.vue-vscode-snippets",
 				"csstools.postcss",
 				"bradlc.vscode-tailwindcss",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"GitHub.vscode-github-actions"
 			]
 		}
 	}
