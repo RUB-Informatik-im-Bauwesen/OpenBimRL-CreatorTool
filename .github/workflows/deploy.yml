@@ -22,6 +22,10 @@ jobs:
           node-version: '18'
       - name: Install dependencies
         run: npm ci
+
+      - name: Get package version
+        id: get_package_version
+        run: echo "VERSION=v$(npm pkg get version)" >> "$GITHUB_OUTPUT"
       
       - name: build app
         run: npm run build
@@ -32,4 +36,4 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create ${{ github.ref }} ./build.zip
+        run: gh release create ${{ steps.get_package_version.outputs.VERSION  }} ./build.zip

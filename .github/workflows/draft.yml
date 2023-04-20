@@ -41,5 +41,5 @@ jobs:
                   git commit -m "automatically generated patch event"
                   git push
             
-            - run: gh pr create --title "releasing ${{ github.ref }}" --body "please approve to merge on master" --base master --head "${{ github.ref }}"
+            - run: gh pr create --title "releasing ${{ steps.create_npm_patch.outputs.VERSION  }}" --body "please approve to merge on master" --base master --head "${{ steps.create_npm_patch.outputs.VERSION  }}"
             
