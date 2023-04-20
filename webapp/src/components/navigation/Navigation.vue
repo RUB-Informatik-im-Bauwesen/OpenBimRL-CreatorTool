@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Dropdown from "./Dropdown.vue";
-import { DropdownProps } from "./Types";
 
 const uploadModalItems = {
     XML: () => console.log("XML"),
