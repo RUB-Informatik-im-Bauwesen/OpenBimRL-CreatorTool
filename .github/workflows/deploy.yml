@@ -22,6 +22,12 @@ jobs:
           node-version: '18'
       - name: Install dependencies
         run: npm ci
+      
+      - name: build app
+        run: npm run build
+
+      - name: zip build
+        run: zip -r build.zip -R dist
 
       - name: Create npm patch
         id: create_npm_patch
@@ -40,4 +46,4 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create ${{ steps.create_npm_patch.outputs.VERSION }}
+        run: gh release create ${{ steps.create_npm_patch.outputs.VERSION }} ./build.zip
