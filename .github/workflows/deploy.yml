@@ -23,12 +23,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set version env
-        id: set_version_env
+      - name: Create npm patch
+        id: create_npm_patch
         run: |
-          echo "VERSION=$(npm version patch)" >> $GITHUB_ENV
+          echo "VERSION=$(npm version patch)" >> "$GITHUB_OUTPUT"
 
-      - run: echo "${{ env.Version }}"
+      - run: echo "${{ steps.create_npm_patch.outputs.VERSION  }}"
 
       - run: |
           git config user.name github-actions
@@ -40,4 +40,4 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create ${{ env.Version }}
+        run: gh release create ${{ steps.create_npm_patch.outputs.VERSION }}
