@@ -1,7 +1,7 @@
 <template>
   <div class="anchor">
     <dialog
-      class="absolute block aspect-square w-16 bg-red-800"
+      class="absolute block h-20 w-full bg-red-800 -translate-x-full top-8"
       :class="{ hidden: !active }"
     ></dialog>
   </div>

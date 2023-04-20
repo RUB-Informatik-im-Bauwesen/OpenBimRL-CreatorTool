@@ -9,7 +9,7 @@ import Dropdown from "./Dropdown.vue";
       <li>
         <div class="flex gap-1">
           <Dropdown>Upload</Dropdown>
-          <button class="nav-button">Download</button>
+          <Dropdown>Download</Dropdown>
         </div>
       </li>
       <li><button class="blue bg-blue-600 nav-button">Create Nodes</button></li>

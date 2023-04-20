@@ -10,6 +10,6 @@ export function registerModal(): Ref<boolean> {
   return active;
 }
 
-window.addEventListener("click", () =>
-  modals.forEach((e) => (e.value = false))
-);
+export const closeAll = () => modals.forEach((e) => (e.value = false));
+
+window.addEventListener("click", closeAll);
