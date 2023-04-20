@@ -29,6 +29,8 @@ jobs:
           echo "VERSION=$(npm pkg get version)" >> $GITHUB_ENV
 
       - name: Commit updated version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name 'Florian Becker'
           git config --global user.email 'florianb-de@users.noreply.github.com'
