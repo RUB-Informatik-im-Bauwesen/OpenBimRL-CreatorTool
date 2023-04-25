@@ -20,12 +20,22 @@ defineExpose({ open });
             <slot name="content" />
         </div>
         <form method="dialog" class="flex gap-4 justify-end mt-4">
-            <button class="bg-blue-600 rounded-sm py-1 px-2 text-white" value="accepted">
-                <slot name="accept_button_text" />
+            <button class="bg-gray-500" value="accepted">
+                <span class="text-lg text-white">
+                    <slot name="accept_button_text" />
+                </span>
             </button>
-            <button class="bg-red-600 rounded-sm py-1 px-2 text-white" value="cancel">
-                <slot name="reject_button_text" />
+            <button class="bg-red-600" value="cancel">
+                <span class="text-lg text-white">
+                    <slot name="reject_button_text" />
+                </span>
             </button>
         </form>
     </dialog>
 </template>
+
+<style scoped>
+form button {
+    @apply rounded-sm py-[0.125rem] px-3;
+}
+</style>
