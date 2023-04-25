@@ -47,7 +47,9 @@ const dialog = ref<typeof Dialog | null>(null);
                     Create Nodes
                 </button>
             </li>
-            <li><button class="nav-button">Help?</button></li>
+            <li>
+                <button class="nav-button" @click="$emit('showHelp')">Help?</button>
+            </li>
         </ul>
     </nav>
 </template>
