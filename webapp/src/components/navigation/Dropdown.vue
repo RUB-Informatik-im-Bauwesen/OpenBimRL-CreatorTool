@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 import { DropdownModal as Modal, closeAll } from "../modals";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/vue/20/solid";
 import { DropdownProps } from "./Types";
