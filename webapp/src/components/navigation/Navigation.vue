@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Dropdown } from ".";
+import { DropdownButton } from ".";
 import { Dialog } from "../modals";
 
 const uploadModalItems = {
@@ -20,9 +20,9 @@ const dialog = ref<typeof Dialog | null>(null);
         <ul class="flex gap-4 mt-1">
             <li>
                 <button class="nav-button" @click.prevent="dialog?.open()">
-                    New
+                    <span>New</span>
                 </button>
-                <Dialog ref="dialog">
+                <Dialog ref="dialog" @close="">
                     <template v-slot:title>Creating new Project</template>
                     <template v-slot:content>
                         <p>Are you sure to create a new project?</p>
@@ -34,10 +34,12 @@ const dialog = ref<typeof Dialog | null>(null);
             </li>
             <li>
                 <div class="flex gap-1">
-                    <Dropdown :modal-items="uploadModalItems">Upload</Dropdown>
-                    <Dropdown :modal-items="downloadModalItems"
-                        >Download</Dropdown
-                    >
+                    <DropdownButton :modal-items="uploadModalItems">
+                        <span>Upload</span>
+                    </DropdownButton>
+                    <DropdownButton :modal-items="downloadModalItems">
+                        <span>Download</span>
+                    </DropdownButton>
                 </div>
             </li>
             <li>
