@@ -27,11 +27,11 @@ const elements = ref<Array<any>>(json.elements);
 </script>
 
 <template>
-    <VueFlow :node-types="nodeTypes" v-model="elements">
-        <Background
-            :variant="BackgroundVariant.Lines"
-            :pattern-color="'#efefef'"
-            :size="0.8"
-        />
-    </VueFlow>
+  <VueFlow :node-types="nodeTypes" v-model="elements">
+    <Background
+      :variant="BackgroundVariant.Lines"
+      :pattern-color="'#efefef'"
+      :size="0.8"
+    />
+  </VueFlow>
 </template>

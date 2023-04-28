@@ -7,10 +7,10 @@ const showHelp = ref(false);
 </script>
 
 <template>
-    <Navigation @showHelp="showHelp = !showHelp" />
-    <SideOverlay />
-    <Help v-show="showHelp" @close="showHelp = false" />
-    <Flowchart class="h-screen" />
+  <Navigation @showHelp="showHelp = !showHelp" />
+  <SideOverlay />
+  <Help v-show="showHelp" @close="showHelp = false" />
+  <Flowchart class="h-screen" />
 </template>
 
 <style scoped></style>
