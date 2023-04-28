@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import Flowchart from "./components/Flowchart.vue";
+import { ref } from "vue";
+import { Flowchart, Help, SideOverlay } from "./components";
 import Navigation from "./components/navigation";
+
+const showHelp = ref(false);
 </script>
 
 <template>
-  <Navigation />
+  <Navigation @showHelp="showHelp = !showHelp" />
+  <SideOverlay />
+  <Help v-show="showHelp" @close="showHelp = false" />
   <Flowchart class="h-screen" />
 </template>
 
