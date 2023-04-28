@@ -13,7 +13,7 @@
     "@heroicons/vue": "^2.0.17",
     "@vue-flow/background": "^1.2.0",
     "@vue-flow/core": "^1.19.0",
-    "vue": "^3.2.47"
+    "vue": "^3.3.0-beta"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
