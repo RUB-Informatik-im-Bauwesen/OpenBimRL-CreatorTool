@@ -5,7 +5,7 @@
     >
         <div class="node-head px-2 bg-cyan-100 bg-opacity-60">
             <p class="heading text-center">
-                <span>{{ data.name }}</span>
+                <span>({{ data.name }})</span>
             </p>
             <p class="text-center">
                 <span>{{ data.label }}</span>
