@@ -5,7 +5,7 @@
                 <b-button @click="showModal">New</b-button>
                 <b-modal ref="createNew-modal" title="Creating new Project" @ok="createNewAction">
                     <div class="d-block text-center">
-                        Are you sure to create a new project? 
+                        Are you sure to create a new project?
                         <br>
                         Unsaved changes will be lost.
                     </div>
@@ -36,17 +36,6 @@
                 <b-button @click="handleCreateGroup" variant="danger">Create Group</b-button>
             </b-button-group>
 
-            <!--
-            <b-button-group class="mx-1">
-                <b-button id="tooltip-button-renderBG1" :pressed.sync="$store.state.settings.renderBackground" variant="primary">
-                    Render BG
-                </b-button>
-                <b-tooltip target="tooltip-button-renderBG1" triggers="hover">
-                    Toggles the rendering of the background grid.
-                </b-tooltip>
-            </b-button-group>
-            -->
-
             <b-button v-b-toggle.sidebar-right>Help?</b-button>
             <b-sidebar id="sidebar-right" title="Information" right shadow>
                 <div class="px-3 py-2">
@@ -61,24 +50,24 @@
                     <b-link href="https://www.inf.bi.ruhr-uni-bochum.de/">
                         <b-img src="https://www.inf.bi.ruhr-uni-bochum.de/iib/mam/images/logos/logo_menue_de.png" fluid thumbnail></b-img>
                     </b-link>
-                    
+
                     <br>
 
                     <table class="sidebar-block">
                         <tr>
-                            <td><b>Institution:</b></td> 
+                            <td><b>Institution:</b></td>
                             <td>Lehrstuhl für Informatik im Bauwesen <br> an der Ruhr-Universität Bochum</td>
                         </tr>
                         <tr>
-                            <td><b>Entwickler:</b></td> 
+                            <td><b>Entwickler:</b></td>
                             <td>Marcel Stepien</td>
                         </tr>
                         <tr>
-                            <td><b>E-Mail:</b></td> 
+                            <td><b>E-Mail:</b></td>
                             <td>marcel.stepien@ruhr-uni-bochum.de</td>
                         </tr>
                         <tr>
-                            <td><b>Datum:</b></td> 
+                            <td><b>Datum:</b></td>
                             <td>{{ $store.state.lastModified }}</td>
                         </tr>
                     </table>
@@ -100,7 +89,7 @@
         </b-button-toolbar>
 
         <graphNodeMenu />
-        
+
         <input id="uploadJSONAnchorElem" type="file" style="display:none" @change="uploaderOnChange($event, 'json')" />
         <input id="uploadXMLAnchorElem" type="file" style="display:none" @change="uploaderOnChange($event, 'xml')" />
         <a id="downloadAnchorElem" style="display:none"></a>
@@ -115,7 +104,25 @@
                 <b-button class="mt-3" variant="primary" block @click="startDownload">Download</b-button>
             </b-input-group>
         </b-modal>
-    </div>
+        <!-- if condition for group-modal rendering -->
+        <div id="create-group-modal-Container">
+            <b-modal id="create-group-modal" title="create Group" @ok="onCreateGroupModalConfirm">
+                <b-input-group>
+                    <template #prepend>
+                        <b-input-group-text>Label</b-input-group-text>
+                    </template>
+                    <b-form-input v-model="initialLabel"></b-form-input>
+                </b-input-group>
+
+                <b-input-group class="colorPickerWrapper">
+                    <template #prepend id="colorPicker">
+                        <chrome-picker v-model="initialColor" />
+                    </template>
+                </b-input-group>
+            </b-modal>
+        </div>
+
+</div>
 </template>
 
 <script>
@@ -128,28 +135,37 @@ import GraphNodeMenu from './GraphNodeMenu/GraphNodeMenu.vue';
 import Parser from '/webapp/src/core/ParserOpenBIMRL.ts';
 import { createGroup, updateGroup } from '/webapp/src/core/CustomNodeSetup.ts';
 import xmljs from 'xml-js';
-
+import { Chrome } from "vue-color"
 export default {
     name: "ReactflowTopMenu",
     
     data() {
         return {
-            downloadContext : { 
-                data: { 
+            modalconfirmed: false,
+            initialColor: { hex: "#00340034" },
+            initialLabel:'',
+            dblClickSelectedNode: { data: { label: "" }, style: { backgroundColor: this.initialColor } },
+            downloadContext: {
+                data: {
                     filename: "",
                     filetype: ""
                 }
             } //Initially: empty placeholder node for modal rendering
         }
     },
-
     methods: {
-        handleCreateGroup(){
-            let group = createGroup();
+        onCreateGroupModalConfirm() {
+            this.modalconfirmed = true
+            let group = createGroup(this.initialColor, this.initialLabel);
+            var size = group.data.groupedElementIds.length
+            console.log("groupSize: " + size)
             updateGroup(group.id);
             this.$emit("callNotify");
         },
-        showFilenameModal(filetype){
+        handleCreateGroup() {
+            this.$bvModal.show("create-group-modal");
+        },
+        showFilenameModal(filetype) {
             this.downloadContext.data.filetype = filetype;
             this.$bvModal.show("filename-input-modal");
         },
@@ -256,7 +272,8 @@ export default {
     },
     
     components: {
-        GraphNodeMenu
+        GraphNodeMenu,
+        'chrome-picker': Chrome,
     }
     
 }
@@ -272,16 +289,24 @@ export default {
 }
 
 .vl {
-  border-left: 2px solid gray;
-  height: 100%;
-  margin-left: 5px;
-  margin-right: 5px;
+    border-left: 2px solid gray;
+    height: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .sidebar-block {
-    font-size: 12px; 
-    width: 100%; 
+    font-size: 12px;
+    width: 100%;
     margin-top: 10px;
     margin-bottom: 20px;
+}
+.colorPickerWrapper {
+    width: auto;
+    text-align: center;
+    margin-top: 3.5%;
+}
+.input-group-prepend {
+  margin: auto;
 }
 </style>

@@ -35,6 +35,24 @@
                 <b-form-input v-model="dblClickSelectedNode.data.label"></b-form-input>
             </b-input-group>
         </b-modal>
+
+        <!-- if condition for group-modal rendering -->
+        <div id="group-modal-Conmtainer">
+            <b-modal id="group-modal" title="Group editing Modal" @ok="onGroupModalConfirm">
+                <b-input-group>
+                    <template #prepend>
+                        <b-input-group-text>Label</b-input-group-text>
+                    </template>
+                    <b-form-input v-model="dblClickSelectedNode.data.label"></b-form-input>
+                </b-input-group>
+
+                <b-input-group id="colorPickerWrapper">
+                    <template #prepend id="colorPicker">
+                        <chrome-picker v-model="colors" />
+                    </template>
+                </b-input-group>
+            </b-modal>
+        </div>
     </div>
 </template>
 
@@ -43,19 +61,19 @@ import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements } from 're
 import Reactflowcontrols from './Reactflowcontrols.vue';
 import Reactflowbackground from './Reactflowbackground.vue';
 import Parser, { createUniqueID } from '../../../core/ParserOpenBIMRL.ts';
-import { 
+import {
     DEFAULT_NODE_WIDTH,
     //createInputType, 
     //createFunctionType, 
     //createRuleIdentifier, 
-    creatFancyFunctionType, 
-    createFancyInputType, 
+    creatFancyFunctionType,
+    createFancyInputType,
     createFancyRuleIdentifier,
     updateGroup
 } from "../../../core/CustomNodeSetup.ts";
 import exampleData from "../../../../resources/defaultGraphExample.json";
 import xmljs from 'xml-js';
-
+import { Chrome } from "vue-color"
 export default {
     name: "Reactflowviewer",
 
@@ -63,8 +81,8 @@ export default {
 
     data() {
         return {
-            dblClickSelectedNode : { data: { label: ""}}, //Initially: empty placeholder node for modal rendering
-            panePosition: { x: 0, y:0, zoom: 1}, //A placeholder for the current transformation of the grid pane
+            dblClickSelectedNode: { data: { label: "" }, style: { backgroundColor: "" } }, //Initially: empty placeholder node for modal rendering
+            panePosition: { x: 0, y: 0, zoom: 1 }, //A placeholder for the current transformation of the grid pane
             nodeTypes: { //Sets the NodeStyles dispayed
                 inputType : createFancyInputType, 
                 functionType : creatFancyFunctionType, 
@@ -73,12 +91,45 @@ export default {
                 //functionType : createFunctionType,
                 //ruleIdentifier : createRuleIdentifier
             },
-            localElements: []
+            localElements: [],
+            lastCount: 0,
+            groupModalToggle: true,
+            colors: { hex: "#00340034" },
+            selectedElements: this.$store.state.selectedElements
         }
     },
     methods: {
-        onNodeDrag(event, node){
+        onGroupModalConfirm() {
+            //elem ist nur das geparste elem nicht das reale (keine gropessen ,mehr)
+            var elem = this.dblClickSelectedNode
+            var index;
+            let groupElem = this.localElements.filter(element => {
+                return element.id === elem.id
+            })
+            groupElem[0].data.color = this.colors.hex8
+            groupElem[0].style.backgroundColor = this.colors.hex8
+            //index of 
+            let artemp = this.localElements.filter(element => {
+                return element.id != groupElem[0].id
+            })
+            updateGroup(groupElem[0]);
+            this.localElements = [groupElem[0], ...artemp];
+            //force re-render?
+            //this.$forceUpdate();
+        },
+        setGroup() {
+            this.localElements = this.localElements.sort((a, b) => a.type !== 'group' && b.type === 'group')
+        },
+        showModal() {
+            this.$refs['createNew-modal'].show();
+        },
+        onNodeDrag(event, node) {
             let storedNode = this.findElement(node.id);
+            //greift aber aendert pos. trotzdem? WARUM???
+            if (storedNode.type === 'group') {
+                event.preventDefault()
+                return
+            }
             storedNode.position = node.position;
             
             if(storedNode.parentNode){
@@ -88,6 +139,10 @@ export default {
         },
         onNodeDragStop(event, node){
             let storedNode = this.findElement(node.id);
+            if (storedNode.type === 'group') {
+                event.preventDefault()
+                return
+            }
             storedNode.position = node.position;
 
             if(storedNode.parentNode){
@@ -136,7 +191,7 @@ export default {
 
                 //Register postion to the node instance and create a new unique node ID
                 nodeTemplateInstance.position = position;
-                nodeTemplateInstance.id = createUniqueID(); 
+                nodeTemplateInstance.id = createUniqueID();
 
                 //add node to scene and reload elements
                 this.$store.state.modelCheck.elements.set(nodeTemplateInstance.id, nodeTemplateInstance);
@@ -152,7 +207,7 @@ export default {
             let element = this.findElement(newConnection.source);
             let outLabel = element.data.outputs[newConnection.sourceHandle].name;
 
-            oldEdge.id = createUniqueID(); 
+            oldEdge.id = createUniqueID();
             oldEdge.source = newConnection.source;
             oldEdge.target = newConnection.target;
             oldEdge.sourceHandle = newConnection.sourceHandle;
@@ -166,10 +221,10 @@ export default {
             let outLabel = element.data.outputs[params.sourceHandle].name;
 
             //Create and register new edge
-            let newEdge = { 
-                "id": createUniqueID(), 
-                "source": params.source, 
-                "target": params.target, 
+            let newEdge = {
+                "id": createUniqueID(),
+                "source": params.source,
+                "target": params.target,
                 "sourceHandle":params.sourceHandle,
                 "targetHandle":params.targetHandle, 
                 //"label": outLabel, 
@@ -188,18 +243,27 @@ export default {
         /* onNodeDoubleClick: displays a modal input menu for the selected node */
         onNodeDoubleClick(event, node){
             event.preventDefault();
-            this.dblClickSelectedNode = node;
-            this.$bvModal.show("text-input-modal");
+            if (node.type === 'group') {
+                this.dblClickSelectedNode = node;
+                this.$bvModal.show("group-modal");
+            } else {
+                this.dblClickSelectedNode = node;
+                this.$bvModal.show("text-input-modal");
+            }
         },
         /* onSelectionChange: saves the selected nodes and sets their satus to selected */
         onSelectionChange(elements) {
             //Deselects current selection first (removes BoxShadow)
-            if(this.$store.state.selectedElements){
-                for(let index in this.$store.state.selectedElements){
-                    if(isNode(this.$store.state.selectedElements[index])){
-                        this.$store.state.selectedElements[index].data.selected = false;
+            if (this.$store.state.selectedElements) {
+                for (let index in this.$store.state.selectedElements) {
+                    if (isNode(this.$store.state.selectedElements[index])) {
+                        if (!this.$store.state.selectedElements[index].type === 'group') {
+                            //this.$store.state.selectedElements[index].data.selected = true;
+                        } else {
+                            this.$store.state.selectedElements[index].data.selected = false;
+                        }
                     }
-                    if(isEdge(this.$store.state.selectedElements[index])){
+                    if (isEdge(this.$store.state.selectedElements[index])) {
                         //TODO - custom deselection style
                     }
                 }
@@ -213,40 +277,34 @@ export default {
             }
 
             //Selects current elements (applies BoxShadow)
-            for(let index in this.$store.state.selectedElements){
-                if(isNode(this.$store.state.selectedElements[index])){
+            for (let index in this.$store.state.selectedElements) {
+                if (isNode(this.$store.state.selectedElements[index])) {
+                    if (!this.$store.state.selectedElements[index].type === 'group') {
+                        //this.$store.state.selectedElements[index].data.selected = true;
+                    } else {
+                        this.$store.state.selectedElements[index].data.selected = true;
+                    }
                     this.$store.state.selectedElements[index].data.selected = true;
                 }
-                if(isEdge(this.$store.state.selectedElements[index])){
+                if (isEdge(this.$store.state.selectedElements[index])) {
                     //TODO - custom selection style
                 }
             }
+            this.localElements = this.localElements.sort((a, b) => a.type !== 'group' && b.type === 'group')
         },
         /* deleteSelectedElements: deletes the current selection from the scene */
-        deleteSelectedElements(){
-            let eleArr = Array.from(this.$store.state.modelCheck.elements.values());
-            let currentKeys = Array.from(this.$store.state.modelCheck.elements.keys());
-            let selection = this.$store.state.selectedElements;
-
+        deleteSelectedElements() {
             //Returns an array of elements without the ones from elementsToRemove. 
             //Also removes all incoming/outgoing edges.
             let reducedList = removeElements(
-                selection, 
-                eleArr
-            ); 
-
-            for(let activeElement of reducedList){
-                const index = currentKeys.indexOf(activeElement.id);
-                if (index > -1) { // only splice array when item is found
-                    currentKeys.splice(index, 1); // 2nd parameter means remove one item only
-                }
+                this.$store.state.selectedElements,
+                Array.from(this.$store.state.modelCheck.elements.values())
+            );
+            for (let selectedNode of this.$store.state.selectedElements) {
+                this.$store.state.modelCheck.elements.delete(selectedNode.id);
             }
-            
-            for(let removedElementKey of currentKeys){
-                this.$store.state.modelCheck.elements.delete(removedElementKey);
-            }
-            
             this.localElements = reducedList;
+            setGroup()
         },
         findElement(id){
             return this.$store.state.modelCheck.elements.get(id);
@@ -259,7 +317,8 @@ export default {
             this.localElements = Array.from(
                 this.$store.state.modelCheck.elements.values()
             );
-        }
+            this.localElements = this.localElements.sort((a, b) => a.type !== 'group' && b.type === 'group')
+        },
     },
     mounted: function () {
         //Load sample data when mounted
@@ -308,7 +367,7 @@ export default {
     },
     watch: {
         // You can also set up a watcher for name here if you like
-        currentfile() { 
+        currentfile() {
             // POST request using fetch
             fetch("http://localhost:3000/load", {
                 method: "POST",
@@ -316,32 +375,62 @@ export default {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ file: this.currentfile })
             }).then(response => response.text()) //.then(response => response.json())
-            .then(data => {
-                let jsonStrData = xmljs.xml2json(data, {compact: true, spaces: 4});
-                let jsonData = JSON.parse(jsonStrData);
+                .then(data => {
+                    let jsonStrData = xmljs.xml2json(data, {compact: true, spaces: 4});
+                    let jsonData = JSON.parse(jsonStrData);
                 
-                let opts = this.$store.state.settings;
-                let parser = new Parser();
-                let elements = parser.parse(jsonData, opts);
+                    let opts = this.$store.state.settings;
+                    let parser = new Parser();
+                    let elements = parser.parse(jsonData, opts);
 
-                this.$store.state.modelCheck.elements = new Map();
-                for(let ele of elements){
-                    this.$store.state.modelCheck.elements.set(ele.id, ele);
-                }
-            }); //response.json()
-        }
+                    this.$store.state.modelCheck.elements = new Map();
+                    for(let ele of elements){
+                        this.$store.state.modelCheck.elements.set(ele.id, ele);
+                    }
+                }); //response.json()
+        },
+        localElements() {
+            if (this.localElements.length === this.lastCount) {
+                return
+            }
+            this.localElements = this.localElements.sort((a, b) => a.type !== 'group' && b.type === 'group')
+            this.lastCount = this.localElements.length
+        },
     },
     components: {
         ReactFlow,
         Reactflowcontrols,
         Reactflowbackground,
-        ReactFlowProvider
+        ReactFlowProvider,
+        'chrome-picker': Chrome,
     }
 }
 </script>
 
+<style>
+.react-flow__node-group {
+    z-index: -10 !important;
+}
+</style>
+
 <style scoped>
-#reactflowviewer {
-    
+#reactflowviewer {}
+
+#colorPickerWrapper {
+    width: auto;
+    text-align: center;
+    margin-top: 3.5%;
+}
+.colorButton {
+    padding: 5px;
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+    -webkit-box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, .3);
+    box-shadow: 0 5px 10px #0000004d;
+    cursor: pointer;
+}
+.input-group-prepend {
+    margin: auto;
 }
 </style>
