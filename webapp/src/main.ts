@@ -1,5 +1,11 @@
-import { createApp } from "vue";
-import "./style.css";
-import App from "./App.vue";
+import { createApp } from 'vue';
+import App from './App.vue';
+import { initialGraph } from './components/graph/config';
+import { graphInjectionKey } from './keys';
+import './style.css';
 
-createApp(App).mount("#app");
+const graph = initialGraph();
+
+const app = createApp(App);
+app.provide(graphInjectionKey, graph);
+app.mount('#app');

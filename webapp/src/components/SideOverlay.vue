@@ -1,22 +1,22 @@
 <template>
-  <aside
-    class="fixed z-10 inset-y-16 w-10 border bg-neutral-200 shadow-md selection:shadow-xl rounded bg-opacity-90 right-4 duration-200 transition-all"
-    :class="{ open: open }"
-  >
-    <button
-      class="w-10 h-full hover:bg-neutral-300 transition-colors duration-300 relative"
-      @click="handler"
+    <aside
+        class="fixed inset-y-16 right-4 z-10 w-10 rounded border bg-neutral-200 bg-opacity-90 shadow-md transition-all duration-200 selection:shadow-xl"
+        :class="{ open: open }"
     >
-      <div
-        class="text-xl block -rotate-90 absolute -left-2"
-        v-text="open ? 'close' : 'open'"
-      />
-    </button>
-  </aside>
+        <button
+            class="relative h-full w-10 transition-colors duration-300 hover:bg-neutral-300"
+            @click="handler"
+        >
+            <div
+                class="absolute -left-2 block -rotate-90 text-xl"
+                v-text="open ? 'close' : 'open'"
+            />
+        </button>
+    </aside>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const open = ref(false);
 
@@ -24,6 +24,6 @@ const handler = (event: Event) => (open.value = !open.value);
 </script>
 <style scoped>
 aside.open {
-  @apply w-1/2;
+    @apply w-1/2;
 }
 </style>

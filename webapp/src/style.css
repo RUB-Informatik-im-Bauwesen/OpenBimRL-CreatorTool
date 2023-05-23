@@ -1,19 +1,23 @@
 /* import the required styles */
-@import "@vue-flow/core/dist/style.css";
+@import '@vue-flow/core/dist/style.css';
 
 /* import the default theme (optional) */
-@import "@vue-flow/core/dist/theme-default.css";
+@import '@vue-flow/core/dist/theme-default.css';
+
+/* import control styles */
+@import '@vue-flow/controls/dist/style.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer utilities {
-  .anchor {
-    visibility: collapse;
-    @apply relative;
-  }
+    .anchor {
+        visibility: collapse;
+        @apply relative;
+    }
 
-  .anchor > * {
-    visibility: visible;
-  }
+    .anchor > * {
+        visibility: visible;
+    }
 }

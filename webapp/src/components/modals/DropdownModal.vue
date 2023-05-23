@@ -1,23 +1,25 @@
 <template>
-  <div class="anchor">
-    <dialog
-      class="absolute block bg-white shadow-lg -translate-x-full top-8"
-      :class="{ hidden: !active }"
-    >
-      <ul class="flex flex-col gap-px">
-        <li v-for="item in Object.keys(modalItems)" class="border">
-          <a @click.stop="modalItems[item]" class="cursor-pointer px-4">{{
-            item
-          }}</a>
-        </li>
-      </ul>
-    </dialog>
-  </div>
+    <div class="anchor">
+        <dialog
+            class="absolute top-8 block -translate-x-full bg-white shadow-lg"
+            :class="{ hidden: !active }"
+        >
+            <div class="flex flex-col gap-px">
+                <form
+                    v-for="item in Object.keys(modalItems)"
+                    @submit.prevent="modalItems[item]"
+                    class="border hover:bg-slate-200 hover:border-slate-400"
+                >
+                    <button class="cursor-pointer px-4">{{ item }}</button>
+                </form>
+            </div>
+        </dialog>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { registerModal } from ".";
-import { DropdownProps } from "../navigation/Types";
+import { registerModal } from '.';
+import type { DropdownProps } from '../navigation/Types';
 
 const { modalItems } = defineProps<{ modalItems: DropdownProps }>();
 
