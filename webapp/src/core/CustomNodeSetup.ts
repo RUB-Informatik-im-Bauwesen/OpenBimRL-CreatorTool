@@ -449,24 +449,10 @@ function createSources(sourceJSON:any, headOffsetProzentage:number, createLabel 
     return reactVueNode;
 }
 
-const isValidHex = (hex) => /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex)
-
-const getChunksFromString = (st, chunkSize) => st.match(new RegExp(`.{${chunkSize}}`, "g"))
-
-const convertHexUnitTo256 = (hexStr) => parseInt(hexStr.repeat(2 / hexStr.length), 16)
-
-const getAlphafloat = (a, alpha) => {
-    if (typeof a !== "undefined") {return a / 255}
-    if ((typeof alpha != "number") || alpha <0 || alpha >1){
-      return 1
-    }
-    return alpha
-}
-
-
-//cerate group(color, label) farbe+label uebergeben und initial setzen
-export function createGroup(initialColor, initialLabel) {
-    console.log(initialColor.hex8)
+/**
+ * 
+ */
+export function createGroup(){
     let selectedNodes = store.state.selectedElements;
 
     let gId = uuidv4();
@@ -474,21 +460,18 @@ export function createGroup(initialColor, initialLabel) {
     let group = {
         id: gId,
         type: "group",
-        data: {
-            label: initialLabel,
-            localWidth: 0,
-            localHeight: 0,
-            groupedElementIds: [],
-            color: initialColor.hex8
+        data: { 
+            label: 'Example Group Label', 
+            localWidth: 0, 
+            localHeight: 0, 
+            groupedElementIds: [], 
+            color: 'rgba(0, 255, 0, 0.2)' 
         },
         position: { x: 0, y: 0 },
         className: 'light',
-        focusable: false,
-        selectable: true,
-        draggable: false,
-        style: {
-            backgroundColor: initialColor.hex8,
-            width: 0,
+        style: { 
+            backgroundColor: 'rgba(0, 255, 0, 0.2)', 
+            width: 0, 
             height: 0
             //boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
             //transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
@@ -506,10 +489,6 @@ export function createGroup(initialColor, initialLabel) {
     store.state.modelCheck.elements.set(group.id, group);
 
     return group;
-}
-
-export function getGroupSize(id) {
-    return store.state.modelCheck.elements.get(id);
 }
 
 /**
@@ -531,7 +510,7 @@ export function updateGroup(groupID){
     if(groupNode){
 
         let margin = 25;
-
+        
         let newPosition = { x: undefined, y: undefined };
         let cornerPosition = { x: undefined, y: undefined };
 
@@ -547,18 +526,18 @@ export function updateGroup(groupID){
             }else{
                 let sourceCount = gNode.data.outputs ? gNode.data.outputs.length : 0;
                 let targetCount = gNode.data.inputs ? gNode.data.inputs.length : 0;
-
+                
                 let maxCount = sourceCount;
                 if(sourceCount < targetCount){
                     maxCount = targetCount;
                 }
-
+                
                 let maxSize = (stepsize * maxCount) + 25 + nodeHeaderSize;
 
                 offsetX = DEFAULT_NODE_WIDTH;
                 offsetY = maxSize;
             }
-
+            
             if(!newPosition.x){ newPosition.x = gNode.position.x; }
             if(!cornerPosition.x){ cornerPosition.x = gNode.position.x; }
 
@@ -567,22 +546,21 @@ export function updateGroup(groupID){
 
             if(newPosition.x > gNode.position.x){ newPosition.x = gNode.position.x; }
             if(cornerPosition.x < (gNode.position.x + offsetX)){ 
-                cornerPosition.x = (gNode.position.x + offsetX);
+                cornerPosition.x = (gNode.position.x + offsetX); 
             }
 
             if(newPosition.y > gNode.position.y){ newPosition.y = gNode.position.y; }
             if(cornerPosition.y < (gNode.position.y + offsetY)){ 
-                cornerPosition.y = (gNode.position.y + offsetY);
+                cornerPosition.y = (gNode.position.y + offsetY); 
             }
-            // updateGroupNode(gNodeId, offsetX, offsetY);
         }
 
         newPosition.x = newPosition.x - margin;
         newPosition.y = newPosition.y - margin;
-
+        
         cornerPosition.x = cornerPosition.x + margin;
         cornerPosition.y = cornerPosition.y + margin;
-
+        
         let localWidth = cornerPosition.x - newPosition.x;
         let localHeight = cornerPosition.y - newPosition.y;
 
@@ -598,9 +576,9 @@ export function updateGroup(groupID){
         groupNode.data.localWidth = localWidth;
         groupNode.data.localHeight = localHeight;
 
-        groupNode.style = {
-            backgroundColor: groupNode.data.color,
-            width: localWidth,
+        groupNode.style = { 
+            backgroundColor: groupNode.data.color, 
+            width: localWidth, 
             height: localHeight
         };
 
@@ -609,31 +587,5 @@ export function updateGroup(groupID){
         if(groupNode.parentNode){
             updateGroup(groupNode.parentNode);
         }
-    }
-}
-
-export function updateGroupNode(nodeID, offsetX, offsetY) {
-    let node = findElement(nodeID);
-    let gEIds = node ? node.data.groupedElementIds : undefined;
-
-    if (node) {
-        let margin = 25;
-        let newPosition = { x: undefined, y: undefined };
-        let cornerPosition = { x: undefined, y: undefined };
-
-        newPosition.x = newPosition.x + offsetX;
-        newPosition.y = newPosition.y + offsetY;
-
-        node.position = {
-            x: 0,
-            y: 0
-        }
-
-
-        node.style = {
-            backgroundColor: node.data.color,
-        };
-
-        store.state.modelCheck.elements.set(node.id, node);
     }
 }

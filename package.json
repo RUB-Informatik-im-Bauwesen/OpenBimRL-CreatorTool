@@ -16,7 +16,6 @@
     "stream": "0.0.2",
     "uuid": "^8.3.2",
     "vue": "^2.6.12",
-    "vue-color": "^2.8.1",
     "vue-router": "^3.5.3",
     "vue-template-compiler": "^2.6.12",
     "vuera": "^0.2.7",
