@@ -5,11 +5,17 @@
         </div>
 
         <div class="flex flex-wrap justify-center gap-2 p-2">
-            <div class="" v-for="item in filterItems" :key="item.id">
-                <Popper :hover="true" :interactive="false" :arrow="true" :placement="'top'">
+            <div :class="{ 'w-full': showAsList }" v-for="item in filterItems" :key="item.id">
+                <!-- show as icons -->
+                <Popper
+                    v-if="!showAsList"
+                    :hover="true"
+                    :interactive="false"
+                    :arrow="true"
+                    :placement="'top'"
+                >
                     <button
                         class="aspect-square flex justify-center items-center border border-black p-[6px] rounded bg-zinc-200 hover:bg-zinc-400"
-                        :id="`rule-button__${group.id}--${item.id}`"
                         @dragstart="onDragStart($event, item)"
                         draggable="true"
                     >
@@ -22,31 +28,33 @@
                         </div>
                     </template>
                 </Popper>
+                <!-- show as list -->
+                <button
+                    class="w-full flex"
+                    v-else
+                    @dragstart="onDragStart($event, item)"
+                    draggable="true"
+                >
+                    <Cog8ToothIcon class="w-7" />
+                    <span>{{ item.data?.name }}</span>
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ExclamationCircleIcon } from '@heroicons/vue/24/solid';
-import { computed, onMounted } from 'vue';
+import { Cog8ToothIcon, ExclamationCircleIcon } from '@heroicons/vue/24/solid';
+import { computed } from 'vue';
 import Popper from 'vue3-popper';
 import { Rule } from '../Types';
 
 interface Props {
     group: Rule;
     search: string;
+    showAsList?: boolean;
 }
 
-onMounted(() => {
-    // this call
-    const labels = Array.from(document.querySelectorAll('label.rule-button__label'));
-    labels.forEach(element => {
-        if (element.getBoundingClientRect().right < window.innerWidth * 0.95) return;
-        // else
-        console.log(2);
-    });
-});
 const props = defineProps<Props>();
 
 const onDragStart = (event: DragEvent, node: any) => {
@@ -55,16 +63,11 @@ const onDragStart = (event: DragEvent, node: any) => {
     event.dataTransfer.effectAllowed = 'move';
 };
 
-const filterItems = computed(() => {
-    let items = props.group.items;
-    return items.filter(dataObj =>
+const filterItems = computed(() =>
+    props.group.items.filter(dataObj =>
         dataObj.data!.name.toLowerCase().includes(props.search.toLowerCase()),
-    );
-});
+    ),
+);
 </script>
 
-<style scoped>
-button:hover ~ label {
-    @apply opacity-100;
-}
-</style>
+<style scoped></style>

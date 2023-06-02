@@ -22,7 +22,8 @@
 				"csstools.postcss",
 				"bradlc.vscode-tailwindcss",
 				"esbenp.prettier-vscode",
-				"GitHub.vscode-github-actions"
+				"GitHub.vscode-github-actions",
+				"mhutchie.git-graph"
 			]
 		}
 	}

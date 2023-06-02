@@ -2,12 +2,13 @@
 import { graphInjectionKey } from '@/keys';
 import Parser from '@/ParserOpenBIMRL';
 import { inject, Ref, ref } from 'vue';
+import { xml2js } from 'xml-js';
 import { DropdownButton } from '.';
-import type { GraphInject } from '../graph/Types';
-import { Dialog } from '../modals';
-import { DropdownProps } from './Types';
+import type { GraphInject, ParseOptions } from '../graph/Types';
+import { Dialog, DialogReturnValue } from '../modals';
+import type { DropdownProps } from './Types';
 
-const { graph } = inject(graphInjectionKey) as GraphInject;
+const { graph, resetGraph } = inject(graphInjectionKey) as GraphInject;
 
 const downloadFile = (filedata: string, filename: string) => {
     var element = document.createElement('a');
@@ -22,14 +23,39 @@ const downloadFile = (filedata: string, filename: string) => {
     document.body.removeChild(element);
 };
 
+const getUploadedFile = async (input: HTMLInputElement | null): Promise<string> => {
+    if (!input?.files || input.files.length < 1) return Promise.reject('no files inserted');
+    return await input.files[0].text();
+};
+
+const parser = new Parser();
+const parseOptions: ParseOptions = {
+    enablePrecalculations: true,
+    enableRuleIdentifier: true,
+    enableRules: false,
+    multiSelectionMode: false,
+    renderBackground: true,
+};
+
+const uploadXMLInput = ref<HTMLInputElement | null>(null);
+const onXMLUpload = () => {
+    getUploadedFile(uploadXMLInput.value).then(content => {
+        resetGraph(parser.parse(xml2js(content, { compact: true }), parseOptions));
+    });
+};
+
+const uploadJSONInput = ref<HTMLInputElement | null>(null);
+const onJSONUpload = () =>
+    getUploadedFile(uploadJSONInput.value).then(content => resetGraph(JSON.parse(content)));
+
 const uploadModalItems: DropdownProps = {
-    XML: () => console.log('XML'),
-    JSON: () => console.log('JSON'),
+    XML: () => uploadXMLInput.value?.click(),
+    JSON: () => uploadJSONInput.value?.click(),
 };
 const downloadModalItems: Ref<DropdownProps> = ref({
     XML: () =>
         downloadFile(
-            new Parser().build(
+            parser.build(
                 graph.value.elements,
                 graph.value.subChecks,
                 graph.value.resultSets,
@@ -41,6 +67,13 @@ const downloadModalItems: Ref<DropdownProps> = ref({
 });
 
 const dialog = ref<typeof Dialog | null>(null);
+
+const newGraph = () => {
+    const returnValue = dialog.value!.returnValue() as DialogReturnValue;
+    if (returnValue == DialogReturnValue.cancel) return;
+    // else
+    resetGraph();
+};
 </script>
 
 <template>
@@ -54,7 +87,7 @@ const dialog = ref<typeof Dialog | null>(null);
                     ref="dialog"
                     accept_button_class="bg-red-600"
                     reject_button_class="bg-gray-500"
-                    @close=""
+                    @close="newGraph"
                 >
                     <template v-slot:title>Creating new Project</template>
                     <template v-slot:content>
@@ -67,6 +100,20 @@ const dialog = ref<typeof Dialog | null>(null);
             </li>
             <li>
                 <div class="flex gap-1">
+                    <input
+                        class="hidden"
+                        type="file"
+                        ref="uploadXMLInput"
+                        accept="application/xml"
+                        @change="onXMLUpload"
+                    />
+                    <input
+                        class="hidden"
+                        type="file"
+                        ref="uploadJSONInput"
+                        accept="application/json"
+                        @change="onJSONUpload"
+                    />
                     <DropdownButton :modal-items="uploadModalItems">
                         <span>Upload</span>
                     </DropdownButton>

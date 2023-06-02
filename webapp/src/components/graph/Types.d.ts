@@ -74,4 +74,16 @@ export interface GraphJSON {
 export interface GraphInject {
     graph: Ref<GraphJSON>;
     updateGraph: (nodes: Array<CustomNode>, edges: Array<Edge>) => void;
+    registerResetCallback: (callback: GraphResetCallback) => number;
+    resetGraph: (toGraph?: GraphJSON) => void;
+}
+
+export type GraphResetCallback = () => void;
+
+export interface ParseOptions {
+    multiSelectionMode: boolean;
+    enablePrecalculations: boolean;
+    enableRuleIdentifier: boolean;
+    enableRules: boolean;
+    renderBackground: boolean;
 }

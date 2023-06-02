@@ -6,22 +6,17 @@
             </p>
         </div>
         <div class="node-body relative mt-4 min-h-[1.5rem]" :style="`height: ${minHeight}rem`">
-            <p class="text-center">
+            <p class="text-center" :class="{ 'text-blue-600': hovering }">
                 <span class="pr-2" style="display: ruby">{{ data.label }}</span>
             </p>
             <CustomHandle
                 v-for="(input, index) in data.inputs"
+                @mouseenter="hovering = true"
+                @mouseleave="hovering = false"
                 :id="input.index"
                 type="target"
                 :position="Position.Left"
                 :style="calcTopOffsetStyle(index, data.inputs.length)"
-            />
-            <CustomHandle
-                v-for="(output, index) in data.outputs"
-                :id="output.index"
-                type="source"
-                :position="Position.Right"
-                :style="calcTopOffsetStyle(index, data.outputs.length)"
             />
         </div>
     </NodeBase>
@@ -29,12 +24,15 @@
 
 <script setup lang="ts">
 import { NodeProps, Position } from '@vue-flow/core';
+import { ref } from 'vue';
 import { CustomHandle } from '.';
 import { calcTopOffsetStyle, minHeight as heightFunction } from '..';
 import type { RuleIdentifierNodeData } from '../Types';
 import NodeBase from './NodeBase.vue';
 
 const props = defineProps<NodeProps<RuleIdentifierNodeData>>();
+
+const hovering = ref(false);
 
 const minHeight = heightFunction(props.data.inputs, props.data.outputs);
 </script>
