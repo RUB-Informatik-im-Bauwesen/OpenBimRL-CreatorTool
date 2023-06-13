@@ -1,0 +1,39 @@
+{
+    "name": "open_bimrl-creator",
+    "private": true,
+    "version": "0.1.11",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc && vite build",
+        "preview": "vite preview",
+        "format": "npx prettier --config ./prod.prettierrc.json --write ."
+    },
+    "dependencies": {
+        "@heroicons/vue": "^2.0.17",
+        "@vue-flow/background": "^1.2.0",
+        "@vue-flow/controls": "^1.0.6",
+        "@vue-flow/core": "^1.19.0",
+        "@vue-flow/minimap": "^1.1.1",
+        "dagre": "^0.8.5",
+        "stream": "^0.0.2",
+        "uuid": "^9.0.0",
+        "vue": "^3.3.1",
+        "vue3-popper": "^1.5.0",
+        "xml-js": "^1.6.11"
+    },
+    "devDependencies": {
+        "@types/dagre": "^0.7.48",
+        "@types/uuid": "^9.0.1",
+        "@vitejs/plugin-vue": "^4.1.0",
+        "autoprefixer": "^10.4.14",
+        "postcss": "^8.4.22",
+        "prettier": "^2.8.7",
+        "prettier-plugin-organize-imports": "^3.2.2",
+        "prettier-plugin-tailwindcss": "^0.2.8",
+        "tailwindcss": "^3.3.1",
+        "typescript": "^4.9.3",
+        "vite": "^4.2.0",
+        "vue-tsc": "^1.2.0"
+    }
+}

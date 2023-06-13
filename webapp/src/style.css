@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .anchor {
+        visibility: collapse;
+        @apply relative;
+    }
+
+    .anchor > * {
+        visibility: visible;
+    }
+}

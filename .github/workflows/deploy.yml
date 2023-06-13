@@ -1,0 +1,39 @@
+name: Create new Release
+run-name: ${{ github.actor }} created a new release
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create_release:
+    defaults:
+        run:
+            shell: bash
+            working-directory: webapp
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get package version
+        id: get_package_version
+        run: echo "VERSION=v$(npm pkg get version)" >> "$GITHUB_OUTPUT"
+      
+      - name: build app
+        run: npm run build
+
+      - name: zip build
+        run: zip -r build.zip dist
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create ${{ steps.get_package_version.outputs.VERSION  }} ./build.zip
