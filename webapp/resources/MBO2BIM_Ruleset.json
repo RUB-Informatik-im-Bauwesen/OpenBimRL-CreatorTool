@@ -511,6 +511,23 @@
         "color": "LightCyan",
         "items": [
             { 
+                "id": "f2628082-f439-4f84-be10-1c30ed70a9b2", 
+                "type": "functionType", 
+                "data":{
+                    "name": "math.multiply",
+                    "icon": "exclamation-circle-fill", 
+                    "description": "Performes an multiplication operator given two number values.",
+                    "label": "Example Text Here",
+                    "inputs": [
+                        { "index": "0", "name":"number" },
+                        { "index": "1", "name":"number" }
+                    ],
+                    "outputs": [
+                        { "index": "0", "name":"result" }
+                    ],
+                    "selected": false
+                }
+            },{ 
                 "id": "af9d8ccb-be65-4045-a590-82c054de01a5", 
                 "type": "functionType", 
                 "data":{

@@ -47,6 +47,10 @@ export default class Parser {
             return isNode(element);
         });
 
+        let filteredIdentifier = elements.filter((element:any) => {
+            return isNode(element) && element.type === "ruleIdentifier";
+        });
+
         //Process and parse nodes
         for(let index in filteredNodes){
             let el = filteredNodes[index];
@@ -154,7 +158,10 @@ export default class Parser {
                     e.setAttribute("targetHandle", el.targetHandle);
                 }
 
-                nodePrecalculations.appendChild(e);
+                if(filteredIdentifier.find(ele => ele.id === ele.target) === undefined){
+                    nodePrecalculations.appendChild(e);
+                }
+
             }
         }
 
@@ -340,6 +347,10 @@ export default class Parser {
                 let eAttr = e._attributes;
 
                 let sourceNode = nodeMap[eAttr.source];
+                if(sourceNode === undefined){
+                    continue;
+                }
+
                 if(typeof sourceNode["Outputs"] !== 'undefined'){
                     let outputHandle = sourceNode["Outputs"]["Output"];
                     if(!Array.isArray(outputHandle)){
@@ -353,6 +364,10 @@ export default class Parser {
                 }
 
                 let targetNode = nodeMap[eAttr.target];
+                if(targetNode === undefined){
+                    continue;
+                }
+
                 if(typeof targetNode["Inputs"] !== 'undefined'){
                     let inputHandle = targetNode["Inputs"]["Input"];
                     if(!Array.isArray(inputHandle)){
