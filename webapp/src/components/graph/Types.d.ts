@@ -1,6 +1,14 @@
 import type { Edge, Node } from '@vue-flow/core';
 import type { Ref } from 'vue';
+import { RuleOperator, RuleOrRuleSetType, RuleQuantifier, RuleSetOperator } from './enums';
 
+export interface GraphJSON {
+    elements: Array<CustomNode | Edge>;
+    subChecks: SubChecks;
+    resultSets: ResultSets;
+}
+
+// Nodes
 export interface NodeData<InputConnectorType = unknown, OutputConnectorType = unknown> {
     name: string;
     icon: string;
@@ -31,44 +39,44 @@ export type RuleIdentifierNodeData = NodeData<BaseConnectorType, BaseConnectorTy
 
 export type CustomNode = Node<NodeData<unknown, unknown>>;
 
-export type Operator = 'equals' | 'or' | 'and';
-
-export interface RulesOrRuleSet {
-    label: string;
-    type: string;
-    quantifier: string;
-    operator: Operator;
-    operand1: string;
-    operand2: string;
-    rulesOrRuleSets: RulesOrRuleSets;
-}
-
-export type RulesOrRuleSets = Array<RulesOrRuleSet>;
-
-export type SubChecks = Array<{
-    label: string;
-    name: string;
-    applicability: Array<never>;
-    rulesOrRuleSets: RulesOrRuleSets;
-    resultSets: [];
-    [key: string]: any;
-}>;
+// Rules and RuleSets
 
 export interface Rule {
-    id: string;
-    name: string;
-    color: string;
-    items: Array<CustomNode>;
+    label: string;
+    operand1: string;
+    operand2: string;
+    operator: RuleOperator;
+    quantifier: RuleQuantifier;
+    type: RuleOrRuleSetType;
 }
 
-export type RuleSet = Array<Rule>;
+export interface RuleSet {
+    label: string;
+    type: RuleOrRuleSetType;
+    operator: RuleSetOperator;
+    rulesOrRuleSets: Array<Rule | RuleSet>;
+}
 
-export type ResultSets = Array<any>;
+export type RulesOrRuleSets = Array<Rule | RuleSet>;
 
-export interface GraphJSON {
-    elements: Array<CustomNode | Edge>;
-    subChecks: SubChecks;
-    resultSets: ResultSets;
+export type SubChecks = Array<SubCheck>;
+
+export interface SubCheck {
+    label: string;
+    name: string;
+    applicability: RulesOrRuleSets;
+    rulesOrRuleSets: RulesOrRuleSets;
+    resultSets: Array<unknown>;
+    [key: string]: any;
+}
+
+export type ResultSets = Array<ResultSet>;
+export interface ResultSet {
+    elements: string;
+    filter: string;
+    label: string;
+    name: string;
+    type: 'resultSet';
 }
 
 export interface GraphInject {

@@ -27,6 +27,7 @@ export function ConnectEvent(
             strokeWidth: 4,
         };
 
+        // check if connection is valid
         if (
             !connection.source ||
             !connection.sourceHandle ||
@@ -35,7 +36,12 @@ export function ConnectEvent(
         )
             return;
 
-        const existingConnection = edges.value.find(element => element.target == edge.target);
+        // check if output was occupied and remove previous connection
+
+        const existingConnection = edges.value.find(
+            element =>
+                element.targetNode.id === edge.target && element.targetHandle === edge.targetHandle,
+        );
 
         if (existingConnection) removeEdges([existingConnection]);
 

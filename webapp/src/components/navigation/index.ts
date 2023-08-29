@@ -1,5 +1,3 @@
-import Navigation from './Navigation.vue';
-
 export { default as DropdownButton } from './DropdownButton.vue';
-
-export default Navigation;
+export { default as SideNavigation } from './SideNavigation.vue';
+export { default as TopNavigation } from './TopNavigation.vue';

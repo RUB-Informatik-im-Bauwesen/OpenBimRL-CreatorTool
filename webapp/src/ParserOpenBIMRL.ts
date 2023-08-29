@@ -6,6 +6,8 @@ import type {
     GraphJSON,
     ParseOptions,
     ResultSets,
+    Rule,
+    RuleSet,
     RulesOrRuleSets,
     SubChecks,
 } from './components/graph/Types';
@@ -183,9 +185,9 @@ export default class Parser {
         );
         nodeModelCheck.appendChild(nodeModelSubChecks);
 
-        for (let index in subChecks) {
-            let subCheck = subChecks[index];
-            let nodeModelSubCheck = xmlDoc.createElementNS(
+        for (const index in subChecks) {
+            const subCheck = subChecks[index];
+            const nodeModelSubCheck = xmlDoc.createElementNS(
                 'http://inf.bi.rub.de/OpenBimRL',
                 'ModelSubCheck',
             );
@@ -194,7 +196,7 @@ export default class Parser {
 
             if (typeof subCheck.applicability !== 'undefined') {
                 if (subCheck.applicability.length > 0) {
-                    let nodeApplicability = xmlDoc.createElementNS(
+                    const nodeApplicability = xmlDoc.createElementNS(
                         'http://inf.bi.rub.de/OpenBimRL',
                         'Applicability',
                     );
@@ -211,11 +213,14 @@ export default class Parser {
             }
         }
 
-        let nodeResultSets = xmlDoc.createElementNS('http://inf.bi.rub.de/OpenBimRL', 'ResultSets');
+        const nodeResultSets = xmlDoc.createElementNS(
+            'http://inf.bi.rub.de/OpenBimRL',
+            'ResultSets',
+        );
         nodeModelCheck.appendChild(nodeResultSets);
-        for (let index in resultSets) {
-            let resultSet = resultSets[index];
-            let nodeResultSet = xmlDoc.createElementNS(
+        for (const index in resultSets) {
+            const resultSet = resultSets[index];
+            const nodeResultSet = xmlDoc.createElementNS(
                 'http://inf.bi.rub.de/OpenBimRL',
                 'ResultSet',
             );
@@ -225,18 +230,19 @@ export default class Parser {
             nodeResultSets.appendChild(nodeResultSet);
         }
 
-        let serializer = new XMLSerializer();
-        let xmlString = serializer.serializeToString(xmlDoc);
+        const serializer = new XMLSerializer();
+        const xmlString = serializer.serializeToString(xmlDoc);
 
         return xmlString;
     }
 
     handleRulesOrRuleSets(xmlDoc: Document, parent: Element, rulesOrRuleSets: RulesOrRuleSets) {
-        for (let index in rulesOrRuleSets) {
-            let ruleOrRuleSet = rulesOrRuleSets[index];
+        for (const index in rulesOrRuleSets) {
+            const ruleOrRuleSet = rulesOrRuleSets[index];
 
             if (ruleOrRuleSet.type === 'rule') {
-                let nodeRule = xmlDoc.createElementNS('http://inf.bi.rub.de/OpenBimRL', 'Rule');
+                const rule = ruleOrRuleSet as Rule;
+                const nodeRule = xmlDoc.createElementNS('http://inf.bi.rub.de/OpenBimRL', 'Rule');
 
                 if (typeof ruleOrRuleSet.label !== 'undefined') {
                     if (ruleOrRuleSet.label !== '') {
@@ -244,32 +250,30 @@ export default class Parser {
                     }
                 }
 
-                if (ruleOrRuleSet.quantifier) {
-                    if (
-                        ruleOrRuleSet.quantifier !== new String() ||
-                        ruleOrRuleSet.quantifier !== 'undefined'
-                    ) {
-                        nodeRule.setAttribute('quantifier', ruleOrRuleSet.quantifier);
+                if (rule.quantifier) {
+                    if (rule.quantifier !== new String() || rule.quantifier !== 'undefined') {
+                        nodeRule.setAttribute('quantifier', rule.quantifier);
                     }
                 }
 
-                nodeRule.setAttribute('operator', ruleOrRuleSet.operator);
-                nodeRule.setAttribute('operand1', ruleOrRuleSet.operand1);
-                nodeRule.setAttribute('operand2', ruleOrRuleSet.operand2);
+                nodeRule.setAttribute('operator', rule.operator);
+                nodeRule.setAttribute('operand1', rule.operand1);
+                nodeRule.setAttribute('operand2', rule.operand2);
                 parent.appendChild(nodeRule);
             }
 
             if (ruleOrRuleSet.type !== 'ruleSet') return;
 
-            let nodeRules = xmlDoc.createElementNS('http://inf.bi.rub.de/OpenBimRL', 'Rules');
+            const ruleSet = ruleOrRuleSet as RuleSet;
+            const nodeRules = xmlDoc.createElementNS('http://inf.bi.rub.de/OpenBimRL', 'Rules');
 
-            if (typeof ruleOrRuleSet.label !== 'undefined' && ruleOrRuleSet.label !== '') {
-                nodeRules.setAttribute('label', ruleOrRuleSet.label);
+            if (typeof ruleSet.label !== 'undefined' && ruleSet.label !== '') {
+                nodeRules.setAttribute('label', ruleSet.label);
             }
 
-            nodeRules.setAttribute('operator', ruleOrRuleSet.operator);
+            nodeRules.setAttribute('operator', ruleSet.operator);
             parent.appendChild(nodeRules);
-            this.handleRulesOrRuleSets(xmlDoc, nodeRules, ruleOrRuleSet.rulesOrRuleSets);
+            this.handleRulesOrRuleSets(xmlDoc, nodeRules, ruleSet.rulesOrRuleSets);
         }
     }
 
@@ -312,7 +316,7 @@ export default class Parser {
                     }
                 }
 
-                let outputHandles: any[] = [];
+                let outputHandles: Array<any> = [];
                 if (typeof n['Outputs'] !== 'undefined') {
                     let ohs = n['Outputs']['Output'];
 
@@ -491,9 +495,9 @@ export default class Parser {
                     let subCheck = subChecksArr[index];
                     let subCheckAttributes = subCheck._attributes ? subCheck._attributes : subCheck; //check if information are packaged as _attributes
 
-                    let newApplicabilityList: any[] = [];
-                    let newRulesOrRuleSetsList: any[] = [];
-                    let newResultSetsList: any[] = [];
+                    let newApplicabilityList: Array<any> = [];
+                    let newRulesOrRuleSetsList: Array<any> = [];
+                    let newResultSetsList: Array<any> = [];
 
                     let subCheckItem = {
                         label: uuidv4(),

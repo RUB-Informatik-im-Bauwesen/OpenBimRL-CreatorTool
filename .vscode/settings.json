@@ -3,5 +3,7 @@
         "*.css": "tailwindcss"
     },
     "css.lint.unknownAtRules": "ignore",
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "webapp/node_modules/typescript/lib",
+    "prettier.prettierPath": "./webapp/node_modules/prettier",
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

@@ -1,6 +1,6 @@
 <template>
     <NodeBase :selected="selected">
-        <div class="node-head bg-yellow-100 bg-opacity-60 px-2">
+        <div class="node-head bg-yellow-100 dark:bg-yellow-600 bg-opacity-60 px-2">
             <p class="heading text-center">
                 <span>{{ data.name }}</span>
             </p>

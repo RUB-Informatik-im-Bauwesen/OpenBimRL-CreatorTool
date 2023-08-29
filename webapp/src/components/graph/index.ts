@@ -8,3 +8,4 @@ export const minHeight = (
 ) => Math.max(inputs.length, outputs.length);
 
 export { default as Graph } from './Graph.vue';
+export { default as GraphNodeMenu } from './modals/GraphNodeMenu.vue';

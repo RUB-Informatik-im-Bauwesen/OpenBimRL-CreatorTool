@@ -449,6 +449,33 @@
                 }
             },
             {
+                "id": "jisdhgfsa-be65-4045-a590-oizhfaiosdf",
+                "type": "functionType",
+                "data": {
+                    "name": "math.multiply",
+                    "icon": "exclamation-circle-fill",
+                    "description": "Performes an multiplication operator given two number values.",
+                    "label": "Example Text Here",
+                    "inputs": [
+                        {
+                            "index": "0",
+                            "name": "number"
+                        },
+                        {
+                            "index": "1",
+                            "name": "number"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "index": "0",
+                            "name": "result"
+                        }
+                    ],
+                    "selected": false
+                }
+            },
+            {
                 "id": "6446aa05-f443-432e-8197-10a14531b473",
                 "type": "functionType",
                 "data": {
