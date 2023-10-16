@@ -1,5 +1,5 @@
-import { RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router';
-import { Graph, ModelCheckView } from '../components';
+import { RouteRecordRaw,createRouter,createWebHashHistory } from 'vue-router';
+import { Graph, IFCViewer, ModelCheckView } from '../components';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -9,6 +9,10 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/checks',
         component: ModelCheckView,
+    },
+    {
+        path: '/viewer',
+        component: IFCViewer,
     },
 ];
 

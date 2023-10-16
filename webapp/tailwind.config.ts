@@ -2,7 +2,11 @@
 import colors from 'tailwindcss/colors';
 
 export default {
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,vue}'],
+    content: [
+        './index.html',
+        './src/**/*.{js,ts,jsx,tsx,vue}',
+        './node_modules/openbim-components/**/*.{js,ts,jsx,tsx}',
+    ],
     darkMode: 'class',
     theme: {
         extend: {
