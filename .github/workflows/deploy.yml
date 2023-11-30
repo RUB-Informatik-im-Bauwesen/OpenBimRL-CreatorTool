@@ -1,5 +1,6 @@
 name: Create new Release
 run-name: ${{ github.actor }} created a new release
+permissions: write-all
 on:
   push:
     branches:
