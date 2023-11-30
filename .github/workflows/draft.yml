@@ -1,5 +1,6 @@
 name: Create new Draft
 run-name: ${{ github.actor }} created a new draft
+permissions: write-all
 on:
     push:
         branches:
