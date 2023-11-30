@@ -1,8 +1,8 @@
 import json from '@/assets/graph/defaultGraphExample.json';
 import { Edge, GraphNode, NodeTypesObject } from '@vue-flow/core';
-import { markRaw, Ref, ref } from 'vue';
-import { FunctionNode, InputType, RuleIdentifier } from './nodes';
+import { Ref, markRaw, ref } from 'vue';
 import type { CustomNode, GraphInject, GraphJSON, GraphResetCallback } from './Types';
+import { FunctionNode, InputType, RuleIdentifier } from './nodes';
 
 export const multiSelectKeys = ['Shift', 'Control'];
 

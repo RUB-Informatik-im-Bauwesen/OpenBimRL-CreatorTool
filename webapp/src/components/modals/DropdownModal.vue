@@ -1,7 +1,7 @@
 <template>
     <div class="anchor">
         <dialog
-            class="absolute top-8 block -translate-x-full bg-white shadow-lg"
+            class="absolute top-8 z-10 block -translate-x-full bg-white shadow-lg"
             :class="{ hidden: !active }"
         >
             <div class="flex flex-col gap-px">
@@ -10,7 +10,7 @@
                     @submit.prevent="modalItems[item]"
                     class="border hover:bg-slate-200 hover:border-slate-400"
                 >
-                    <button class="cursor-pointer px-4">{{ item }}</button>
+                    <button class="cursor-pointer px-4 bg-transparent">{{ item }}</button>
                 </form>
             </div>
         </dialog>
