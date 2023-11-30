@@ -1,4 +1,4 @@
-import { RouteRecordRaw,createRouter,createWebHashHistory } from 'vue-router';
+import { RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router';
 import { Graph, IFCViewer, ModelCheckView } from '../components';
 
 const routes: Array<RouteRecordRaw> = [

@@ -449,6 +449,38 @@
                 }
             },
             {
+                "id": "41774c94ed2d19c68e6a8bcf07934946",
+                "type": "functionType",
+                "data": {
+                    "name": "math.maximum-equals",
+                    "icon": "exclamation-circle-fill",
+                    "description": "Returns all numbers smaller or equal the 2nd input.",
+                    "label": "Example Text Here",
+                    "inputs": [
+                        { "index": "0", "name": "number" },
+                        { "index": "1", "name": "number" }
+                    ],
+                    "outputs": [{ "index": "0", "name": "result" }],
+                    "selected": false
+                }
+            },
+            {
+                "id": "41774c94ed2d19c68e6a8bcf07934946",
+                "type": "functionType",
+                "data": {
+                    "name": "math.minimum-equals",
+                    "icon": "exclamation-circle-fill",
+                    "description": "Returns all numbers greater or equal the 2nd input.",
+                    "label": "Example Text Here",
+                    "inputs": [
+                        { "index": "0", "name": "number" },
+                        { "index": "1", "name": "number" }
+                    ],
+                    "outputs": [{ "index": "0", "name": "result" }],
+                    "selected": false
+                }
+            },
+            {
                 "id": "jisdhgfsa-be65-4045-a590-oizhfaiosdf",
                 "type": "functionType",
                 "data": {
