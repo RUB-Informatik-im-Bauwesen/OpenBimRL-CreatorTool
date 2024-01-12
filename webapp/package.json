@@ -1,7 +1,7 @@
 {
     "name": "open_bimrl-creator",
     "private": true,
-    "version": "0.1.13",
+    "version": "0.1.14",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -9,6 +9,10 @@
         "preview": "vite preview",
         "format": "npx prettier --config ./prod.prettierrc.json --write .",
         "check-types": "vue-tsc --noEmit"
+    },
+    "peerDependencies": {
+        "@types/three": "0.152.1",
+        "three": "0.152.2"
     },
     "dependencies": {
         "@heroicons/vue": "^2.0.17",
@@ -19,16 +23,15 @@
         "dagre": "^0.8.5",
         "openbim-components": "^1.1.5",
         "stream": "^0.0.2",
-        "three": "^0.157.0",
         "uuid": "^9.0.0",
         "vue": "^3.3.4",
+        "vue-json-pretty": "^2.3.0",
         "vue-router": "^4.2.4",
         "vue3-popper": "^1.5.0",
         "xml-js": "^1.6.11"
     },
     "devDependencies": {
         "@types/dagre": "^0.7.48",
-        "@types/three": "^0.157.0",
         "@types/uuid": "^9.0.1",
         "@vitejs/plugin-vue": "^4.1.0",
         "autoprefixer": "^10.4.14",
@@ -39,6 +42,7 @@
         "tailwindcss": "^3.3.1",
         "typescript": "^5.1.3",
         "vite": "^4.2.0",
-        "vue-tsc": "^1.8.8"
+        "vue-tsc": "^1.8.8",
+        "vue3-spinners": "^1.2.2"
     }
 }

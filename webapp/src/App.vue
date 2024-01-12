@@ -1,49 +1,58 @@
 <template>
     <Help
-        :class="{ 'translate-x-full': !modals[Modal.Help] }"
+        :class="{ 'translate-x-full': !modals[Panels.Help] }"
         class="transition-transform"
-        @close="toggleModal(Modal.Help)"
+        @close="toggleSidePanel(Panels.Help, false)"
+    />
+    <ApiConnection
+        :class="{ 'translate-x-full': !modals[Panels.ApiConnection] }"
+        class="transition-transform"
+        @close="toggleSidePanel(Panels.ApiConnection, false)"
     />
     <GraphNodeMenu
-        :class="{ 'translate-x-full': !modals[Modal.NodeLib] }"
+        :class="{ 'translate-x-full': !modals[Panels.NodeLib] }"
         class="transition-transform text-default-dark dark:text-default-light"
     />
     <main class="grid h-screen text-default-dark dark:text-default-light">
         <TopNavigation
             style="grid-area: nav"
-            @showHelp="toggleModal(Modal.Help)"
-            @showNodeLib="toggleModal(Modal.NodeLib)"
+            @showHelp="toggleSidePanel(Panels.Help)"
+            @showNodeLib="toggleSidePanel(Panels.NodeLib)"
+            @showApiConnection="toggleSidePanel(Panels.ApiConnection)"
         />
         <SideNavigation style="grid-area: side" />
-        <RouterView style="grid-area: main" @click="closeAllModals()" />
+        <RouterView style="grid-area: main" @click="closeAllPanels()" />
     </main>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { GraphNodeMenu, Help, SideNavigation, TopNavigation } from './components';
+import { GraphNodeMenu, SideNavigation, TopNavigation } from './components';
+import { ApiConnection, Help } from './components/side_panels';
 
-enum Modal {
+enum Panels {
     Help,
     NodeLib,
     SideOverlay,
+    ApiConnection,
 }
-const modals = ref<{ [key in Modal]?: boolean }>({});
 
-modals.value[Modal.Help] = false;
-modals.value[Modal.NodeLib] = false;
+const modals = ref<{ [key in Panels]?: boolean }>({});
 
-const toggleModal = (modalName: Modal) => {
-    const oldState = modals.value[modalName];
-    closeAllModals();
+modals.value[Panels.Help] = false;
+modals.value[Panels.NodeLib] = false;
+modals.value[Panels.ApiConnection] = false;
 
-    modals.value[modalName] = !oldState;
-    console.log(modals.value[modalName]);
+const toggleSidePanel = (panelName: Panels, state?: boolean) => {
+    const oldState = modals.value[panelName];
+    closeAllPanels();
+
+    modals.value[panelName] = state ?? !oldState; // same as: `state !== undefined ? state : !oldState`
 };
 
-const closeAllModals = () => {
+const closeAllPanels = () => {
     // this is cursed js/ts
-    for (const [, index] of Object.entries(Modal)) modals.value[index as Modal] = false;
+    for (const [, index] of Object.entries(Panels)) modals.value[index as Panels] = false;
 };
 </script>
 

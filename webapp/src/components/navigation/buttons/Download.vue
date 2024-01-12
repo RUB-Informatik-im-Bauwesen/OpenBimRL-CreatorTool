@@ -37,9 +37,9 @@ const downloadModalItems: Ref<DropdownProps> = ref({
                 graph.value.elements,
                 graph.value.subChecks,
                 graph.value.resultSets,
-                'graph.xml',
+                'graph.openbimrl',
             ),
-            'graph.xml',
+            'graph.openbimrl',
         ),
     JSON: () => downloadFile(JSON.stringify(graph.value), 'graph.json'),
 });

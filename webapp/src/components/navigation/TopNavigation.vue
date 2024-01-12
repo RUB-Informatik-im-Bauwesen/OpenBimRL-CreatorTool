@@ -3,20 +3,28 @@
         class="main-nav bg-default-light border-b dark:border-b-0 dark:bg-default-dark dark:bg-opacity-90 pl-8 text-lg"
     >
         <ul class="flex">
-            <li>
+            <li v-if="route.name == Routes.GRAPH">
                 <NewGraph />
             </li>
-            <li>
+            <li v-if="route.name == Routes.GRAPH">
                 <Upload />
             </li>
-            <li>
+            <li v-if="route.name == Routes.GRAPH">
                 <Download />
             </li>
-            <li>
+            <li v-if="route.name == Routes.GRAPH">
                 <button class="nav-button" @click="$emit('showNodeLib')">Create Nodes</button>
             </li>
-            <li>
+            <li v-if="route.name == Routes.GRAPH">
                 <button class="nav-button">Create Group</button>
+            </li>
+            <li v-if="route.name == Routes.VIEWER">
+                <AddModel />
+            </li>
+            <li>
+                <button class="nav-button" @click="$emit('showApiConnection')">
+                    Api-Connection
+                </button>
             </li>
             <li>
                 <button class="nav-button" @click="$emit('showHelp')">Help?</button>
@@ -44,12 +52,14 @@
 
 <script setup lang="ts">
 import { darkModeKey } from '@/keys';
+import { Routes, default as router } from '@/modules/router';
 import { Ref, inject } from 'vue';
-import { Download, NewGraph, Upload } from './buttons';
+import { AddModel, Download, NewGraph, Upload } from './buttons';
 
-defineEmits(['showNodeLib', 'showHelp']);
+defineEmits(['showNodeLib', 'showHelp', 'showApiConnection']);
 
 const darkMode = inject(darkModeKey) as Ref<boolean>;
+const route = router.currentRoute;
 </script>
 
 <style>
