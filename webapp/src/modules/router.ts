@@ -1,5 +1,5 @@
 import { RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router';
-import { Graph, IFCViewer, ModelCheckView } from '../components';
+import { Graph, ModelCheckView } from '../components';
 
 export enum Routes {
     GRAPH = 'graph',
@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/viewer',
         name: Routes.VIEWER,
-        component: IFCViewer,
+        component: () => import('@/components/viewer/IfcViewer.vue'),
     },
 ];
 
