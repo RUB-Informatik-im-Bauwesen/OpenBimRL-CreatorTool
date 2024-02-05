@@ -47,12 +47,12 @@
                 </button>
             </div>
         </div>
-        <div v-show="connected" class="h-full ml-4 p-4">
-            <div class="border h-full dark:bg-white overflow-auto">
-                <VueJsonPretty
+        <div v-show="connected" class="ml-4 p-4 relative h-full">
+            <div class="border dark:bg-white absolute inset-4 overflow-auto">
+                <json-viewer
                     v-if="!checkLoading"
                     class="dark:text-default-darkest"
-                    :data="checkResult"
+                    :value="checkResult"
                 />
                 <div v-else class="h-full flex justify-center items-center">
                     <VueSpinner size="75" class="dark:text-default-dark" />
@@ -73,7 +73,8 @@ import { VueSpinner, VueSpinnerPacman, VueSpinnerRadio } from 'vue3-spinners';
 
 import Parser from '@/ParserOpenBIMRL';
 import { graphInjectionKey, parserInjectionKey } from '@/keys';
-import VueJsonPretty from 'vue-json-pretty';
+//@ts-ignore // there are no types ;(
+import JsonViewer from 'vue-json-viewer';
 import type { GraphInject } from '../graph/Types';
 
 defineEmits(['close']);
@@ -148,7 +149,7 @@ watch(apiEndpoint, testConnection);
 </script>
 
 <style scoped>
-@import 'vue-json-pretty/lib/styles.css';
+@import 'vue-json-viewer/style.css';
 
 td:first-child {
     vertical-align: baseline;
