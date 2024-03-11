@@ -7,7 +7,7 @@
         class="bg-default-light dark:bg-default-dark"
     >
         <Background
-            :variant="BackgroundVariant.Lines"
+            :variant="backgroundLines ? BackgroundVariant.Lines : BackgroundVariant.Dots"
             :pattern-color="
                 darkMode
                     ? TWConf.theme.extend.colors.default.light
@@ -16,7 +16,11 @@
             :line-width="0.25"
             :size="0.8"
         />
-        <Controls />
+        <Controls>
+            <ControlButton @click="backgroundLines = !backgroundLines">
+                <TableCellsIcon class="bg-black" />
+            </ControlButton>
+        </Controls>
         <CustomMap />
         <Dialog ref="dialog" @close="">
             <template v-slot:title>Change Input</template>
@@ -37,7 +41,7 @@
 <script lang="ts" setup>
 import { darkModeKey, graphInjectionKey } from '@/keys';
 import { Background, BackgroundVariant } from '@vue-flow/background';
-import { Controls } from '@vue-flow/controls';
+import { ControlButton, Controls } from '@vue-flow/controls';
 import { Edge, GraphEdge, GraphNode, VueFlow, isEdge, isNode, useVueFlow } from '@vue-flow/core';
 import { Ref, inject, nextTick, ref, watch } from 'vue';
 import { Dialog } from '../modals';
@@ -45,12 +49,14 @@ import CustomMap from './CustomMap.vue';
 import type { CustomNode, GraphInject } from './Types';
 import { multiSelectKeys, nodeTypes } from './config';
 import { ConnectEvent, DoubleClickEvent, DragOverEvent, DropEvent } from './graphEvents';
+import { TableCellsIcon } from '@heroicons/vue/24/outline';
 
 import TWConf from '@/../tailwind.config';
 
 const dialog = ref<typeof Dialog | null>(null);
 const selectedNode = ref<number>(0);
 const nodeDataIndex = ref<string>('name');
+const backgroundLines = ref<boolean>(true);
 
 // injected from app level (main.ts)
 const { graph, updateGraph, registerResetCallback } = inject(graphInjectionKey) as GraphInject;

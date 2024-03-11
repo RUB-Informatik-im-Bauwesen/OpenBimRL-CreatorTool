@@ -17,7 +17,6 @@
 		"vscode": {
 			"extensions": [
 				"Vue.volar",
-				"Vue.vscode-typescript-vue-plugin",
 				"sdras.vue-vscode-snippets",
 				"csstools.postcss",
 				"bradlc.vscode-tailwindcss",
