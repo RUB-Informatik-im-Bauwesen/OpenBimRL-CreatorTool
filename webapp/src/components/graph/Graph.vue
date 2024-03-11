@@ -40,6 +40,7 @@
 
 <script lang="ts" setup>
 import { darkModeKey, graphInjectionKey } from '@/keys';
+import { TableCellsIcon } from '@heroicons/vue/24/outline';
 import { Background, BackgroundVariant } from '@vue-flow/background';
 import { ControlButton, Controls } from '@vue-flow/controls';
 import { Edge, GraphEdge, GraphNode, VueFlow, isEdge, isNode, useVueFlow } from '@vue-flow/core';
@@ -49,7 +50,6 @@ import CustomMap from './CustomMap.vue';
 import type { CustomNode, GraphInject } from './Types';
 import { multiSelectKeys, nodeTypes } from './config';
 import { ConnectEvent, DoubleClickEvent, DragOverEvent, DropEvent } from './graphEvents';
-import { TableCellsIcon } from '@heroicons/vue/24/outline';
 
 import TWConf from '@/../tailwind.config';
 
